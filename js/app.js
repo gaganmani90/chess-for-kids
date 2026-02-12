@@ -432,7 +432,7 @@
                 container.innerHTML = `
                     <div class="completion-screen">
                         <h2>🌟 All pieces learned! 🌟</h2>
-                        <div class="stars-big">${'★'.repeat(learnState.totalStars)}</div>
+                        <div class="stars-big">${learnState.totalStars} ★</div>
                         <p style="color: #b0b0c0; margin-bottom: 24px;">You earned ${learnState.totalStars} stars!</p>
                         <button class="btn btn-primary" id="learn-play-again">Play Again</button>
                     </div>

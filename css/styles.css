@@ -390,6 +390,14 @@ h3 {
     font-size: 48px;
     margin: 20px 0;
     color: #ffd700;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 480px) {
+    .completion-screen .stars-big {
+        font-size: 36px;
+    }
 }
 
 .hint-btn {
