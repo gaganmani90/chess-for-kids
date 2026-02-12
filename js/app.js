@@ -1,5 +1,9 @@
         // ===== SOUND SYSTEM =====
-        let soundMuted = false;
+        const STORAGE_KEY_MUTE = 'chess-for-kids-muted';
+        const STORAGE_KEY_STARS = 'chess-for-kids-stars';
+        const PAGE_TITLE = 'Chess for Kids';
+
+        let soundMuted = JSON.parse(localStorage.getItem(STORAGE_KEY_MUTE) || 'false');
 
         const Sound = {
             ctx: null,
@@ -16,6 +20,7 @@
             },
 
             correct() {
+                if (navigator.vibrate) navigator.vibrate(30);
                 this._play(() => {
                     this.init();
                 const now = this.ctx.currentTime;
@@ -36,6 +41,7 @@
             },
 
             wrong() {
+                if (navigator.vibrate) navigator.vibrate([50, 50]);
                 this._play(() => {
                     this.init();
                 const now = this.ctx.currentTime;
@@ -87,13 +93,16 @@
             }
         };
 
-        document.getElementById('mute-btn').addEventListener('click', () => {
+        const muteBtn = document.getElementById('mute-btn');
+        muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+        muteBtn.classList.toggle('muted', soundMuted);
+        muteBtn.addEventListener('click', () => {
             soundMuted = !soundMuted;
-            const btn = document.getElementById('mute-btn');
-            btn.textContent = soundMuted ? '🔇' : '🔊';
-            btn.classList.toggle('muted', soundMuted);
-            btn.setAttribute('aria-label', soundMuted ? 'Sound off - tap to unmute' : 'Sound on - tap to mute');
-            btn.setAttribute('title', soundMuted ? 'Sound off' : 'Sound on');
+            localStorage.setItem(STORAGE_KEY_MUTE, JSON.stringify(soundMuted));
+            muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+            muteBtn.classList.toggle('muted', soundMuted);
+            muteBtn.setAttribute('aria-label', soundMuted ? 'Sound off - tap to unmute' : 'Sound on - tap to mute');
+            muteBtn.setAttribute('title', soundMuted ? 'Sound off' : 'Sound on');
         });
 
         // ===== PIECE DATA =====
@@ -368,12 +377,13 @@
             ]
         };
 
+        const savedStars = parseInt(localStorage.getItem(STORAGE_KEY_STARS) || '0', 10);
         let learnState = {
             difficulty: 'easy',
             currentPuzzle: 0,
             attempts: [],
             scores: [0, 0, 0, 0, 0, 0],
-            totalStars: 0
+            totalStars: Math.min(savedStars, 18)
         };
 
         function getMovesForPiece(piece, fromRow, fromCol, board = null) {
@@ -423,14 +433,20 @@
         }
 
         function initLearn() {
+            document.getElementById('total-stars').textContent = learnState.totalStars;
             const container = document.getElementById('quiz-container');
             const data = learnData[learnState.difficulty];
 
             if (learnState.currentPuzzle >= data.length) {
                 learnState.currentPuzzle = 0;
                 learnState.attempts = [];
+                document.title = PAGE_TITLE + ' – All done!';
                 container.innerHTML = `
                     <div class="completion-screen">
+                        <div class="confetti" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
                         <h2>🌟 All pieces learned! 🌟</h2>
                         <div class="stars-big">${learnState.totalStars} ★</div>
                         <p style="color: #b0b0c0; margin-bottom: 24px;">You earned ${learnState.totalStars} stars!</p>
@@ -439,9 +455,12 @@
                 `;
                 document.getElementById('learn-play-again').addEventListener('click', () => {
                     Sound.click();
+                    document.title = PAGE_TITLE;
+                    learnState.quizLocked = false;
                     learnState.totalStars = 0;
                     learnState.scores = [0, 0, 0, 0, 0, 0];
                     document.getElementById('total-stars').textContent = '0';
+                    localStorage.setItem(STORAGE_KEY_STARS, '0');
                     initLearn();
                 });
                 return;
@@ -499,6 +518,7 @@
                     clearTimeout(learnState.autoAdvanceTimeout);
                     learnState.autoAdvanceTimeout = null;
                 }
+                learnState.quizLocked = false;
                 learnState.currentPuzzle++;
                 learnState.attempts = [];
                 initLearn();
@@ -511,12 +531,14 @@
         }
 
         function handleQuizAnswer(selected, correct, btn) {
+            if (learnState.quizLocked) return;
             const feedback = document.querySelector('.feedback');
             const reveal = document.querySelector('.reveal-card');
             const hintBtn = document.getElementById('learn-hint');
             const currentAttempt = learnState.attempts[learnState.currentPuzzle] || 0;
 
             if (selected === correct) {
+                learnState.quizLocked = true;
                 btn.classList.add('correct');
                 feedback.textContent = '✓ Correct!';
                 feedback.classList.add('correct');
@@ -529,6 +551,7 @@
                 learnState.scores[learnState.currentPuzzle] = stars;
                 learnState.totalStars = learnState.scores.reduce((a, b) => a + b, 0);
                 document.getElementById('total-stars').textContent = learnState.totalStars;
+                localStorage.setItem(STORAGE_KEY_STARS, String(learnState.totalStars));
 
                 feedback.innerHTML += ` <span class="stars">${'★'.repeat(stars)}</span>`;
                 Sound.star();
@@ -536,6 +559,7 @@
                 if (hintBtn) hintBtn.style.display = 'none';
                 reveal.classList.add('show');
                 learnState.autoAdvanceTimeout = setTimeout(() => {
+                    learnState.quizLocked = false;
                     learnState.currentPuzzle++;
                     learnState.attempts = [];
                     initLearn();
@@ -572,7 +596,9 @@
         // ===== SANDBOX SECTION =====
         let sandboxState = {
             selectedPiece: null,
-            pieces: {}
+            pieces: {},
+            pickerReady: false,
+            clearReady: false
         };
 
         function initSandbox() {
@@ -582,16 +608,23 @@
                 board.innerHTML = boardHtml.match(/<rect[^>]*>/g).join('');
             }
 
-            document.querySelectorAll('.piece-picker-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.piece-picker-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    sandboxState.selectedPiece = btn.dataset.piece;
-                    document.getElementById('sandbox-instruction').textContent =
-                        `Click a square to place the ${PIECES[btn.dataset.piece].name}`;
-                    Sound.click();
+            document.getElementById('sandbox').classList.toggle('piece-selected', !!sandboxState.selectedPiece);
+            document.querySelectorAll('.piece-picker-btn').forEach(b => b.classList.toggle('selected', b.dataset.piece === sandboxState.selectedPiece));
+
+            if (!sandboxState.pickerReady) {
+                sandboxState.pickerReady = true;
+                document.querySelectorAll('.piece-picker-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.piece-picker-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        sandboxState.selectedPiece = btn.dataset.piece;
+                        document.getElementById('sandbox').classList.add('piece-selected');
+                        document.getElementById('sandbox-instruction').textContent =
+                            `Click a square to place the ${PIECES[btn.dataset.piece].name}`;
+                        Sound.click();
+                    });
                 });
-            });
+            }
 
             if (!board.hasListener) {
                 board.addEventListener('click', (e) => {
@@ -606,11 +639,14 @@
                 board.hasListener = true;
             }
 
-            document.getElementById('sandbox-clear').addEventListener('click', () => {
-                sandboxState.pieces = {};
-                renderSandboxBoard();
-                Sound.click();
-            });
+            if (!sandboxState.clearReady) {
+                sandboxState.clearReady = true;
+                document.getElementById('sandbox-clear').addEventListener('click', () => {
+                    sandboxState.pieces = {};
+                    renderSandboxBoard();
+                    Sound.click();
+                });
+            }
         }
 
         function placePieceOnBoard(row, col, piece) {
@@ -789,7 +825,9 @@
             const faster = raceState.minMoves[0] < raceState.minMoves[1] ? 0 : 1;
 
             if (choice === faster) {
-                result.textContent = '✓ Correct! ' + PIECES[raceState.pieces[faster]].name + ' is faster!';
+                const m0 = raceState.minMoves[0];
+                const m1 = raceState.minMoves[1];
+                result.textContent = '✓ Correct! ' + PIECES[raceState.pieces[faster]].name + ' is faster! (' + m0 + ' vs ' + m1 + ' moves)';
                 result.classList.add('correct');
                 Sound.correct();
             } else {
@@ -889,6 +927,10 @@
                 });
 
                 const moves = getMovesForPiece(setupState.selectedPiece, row, col, boardState);
+                const validMoves = new Set(moves.map(([r, c]) => `${r},${c}`));
+                board.querySelectorAll('rect.square').forEach(rect => {
+                    rect.classList.toggle('valid-move', validMoves.has(`${rect.dataset.row},${rect.dataset.col}`));
+                });
                 moves.forEach(([r, c]) => {
                     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     circle.setAttribute('cx', c * 65 + 32.5);
@@ -899,6 +941,8 @@
                     circle.classList.add('move-highlight');
                     board.appendChild(circle);
                 });
+            } else {
+                board.querySelectorAll('rect.square').forEach(rect => rect.classList.remove('valid-move'));
             }
         }
 
@@ -920,8 +964,10 @@
 
         // ===== NAV =====
         function showSection(sectionId) {
+            document.title = PAGE_TITLE;
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             document.querySelectorAll('.nav-button').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.section === sectionId);
