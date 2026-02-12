@@ -553,7 +553,7 @@
                 document.getElementById('total-stars').textContent = learnState.totalStars;
                 localStorage.setItem(STORAGE_KEY_STARS, String(learnState.totalStars));
 
-                feedback.innerHTML += ` <span class="stars">${'★'.repeat(stars)}</span>`;
+                feedback.innerHTML += ` <span class="stars">${Array(stars).fill('<span class="star">★</span>').join('')}</span>`;
                 Sound.star();
 
                 if (hintBtn) hintBtn.style.display = 'none';
