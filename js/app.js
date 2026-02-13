@@ -1,9 +1,83 @@
-        // ===== SOUND SYSTEM =====
-        const STORAGE_KEY_MUTE = 'chess-for-kids-muted';
-        const STORAGE_KEY_STARS = 'chess-for-kids-stars';
-        const PAGE_TITLE = 'Chess for Kids';
+        // ===== PREFERENCES SYSTEM =====
+        const PREFERENCES_KEY = 'chess-for-kids-preferences';
+        
+        const Preferences = {
+            defaults: {
+                soundMuted: false,
+                totalStars: 0,
+                // Add more preferences here in the future:
+                // theme: 'dark',
+                // difficulty: 'easy',
+                // showHints: true,
+            },
+            
+            data: {},
+            
+            // Load preferences from localStorage
+            load() {
+                try {
+                    const saved = localStorage.getItem(PREFERENCES_KEY);
+                    if (saved) {
+                        this.data = JSON.parse(saved);
+                    } else {
+                        // Migrate from old storage keys if they exist
+                        this.data = { ...this.defaults };
+                        const oldMuted = localStorage.getItem('chess-for-kids-muted');
+                        const oldStars = localStorage.getItem('chess-for-kids-stars');
+                        if (oldMuted !== null) {
+                            this.data.soundMuted = JSON.parse(oldMuted);
+                        }
+                        if (oldStars !== null) {
+                            this.data.totalStars = parseInt(oldStars, 10) || 0;
+                        }
+                        // Save migrated data
+                        this.save();
+                    }
+                    // Merge with defaults to ensure new preferences exist
+                    this.data = { ...this.defaults, ...this.data };
+                } catch (e) {
+                    console.error('Failed to load preferences:', e);
+                    this.data = { ...this.defaults };
+                }
+                return this;
+            },
+            
+            // Save preferences to localStorage
+            save() {
+                try {
+                    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(this.data));
+                } catch (e) {
+                    console.error('Failed to save preferences:', e);
+                }
+                return this;
+            },
+            
+            // Get a preference value
+            get(key) {
+                return this.data[key] !== undefined ? this.data[key] : this.defaults[key];
+            },
+            
+            // Set a preference value and save
+            set(key, value) {
+                this.data[key] = value;
+                this.save();
+                return this;
+            },
+            
+            // Reset all preferences to defaults
+            reset() {
+                this.data = { ...this.defaults };
+                this.save();
+                return this;
+            }
+        };
+        
+        // Initialize preferences
+        Preferences.load();
 
-        let soundMuted = JSON.parse(localStorage.getItem(STORAGE_KEY_MUTE) || 'false');
+        // ===== SOUND SYSTEM =====
+        const PAGE_TITLE = 'Chess for Kids';
+        let soundMuted = Preferences.get('soundMuted');
 
         const Sound = {
             ctx: null,
@@ -98,7 +172,7 @@
         muteBtn.classList.toggle('muted', soundMuted);
         muteBtn.addEventListener('click', () => {
             soundMuted = !soundMuted;
-            localStorage.setItem(STORAGE_KEY_MUTE, JSON.stringify(soundMuted));
+            Preferences.set('soundMuted', soundMuted);
             muteBtn.textContent = soundMuted ? '🔇' : '🔊';
             muteBtn.classList.toggle('muted', soundMuted);
             muteBtn.setAttribute('aria-label', soundMuted ? 'Sound off - tap to unmute' : 'Sound on - tap to mute');
@@ -395,7 +469,7 @@
             ]
         };
 
-        const savedStars = parseInt(localStorage.getItem(STORAGE_KEY_STARS) || '0', 10);
+        const savedStars = Preferences.get('totalStars');
         let learnState = {
             difficulty: 'easy',
             currentPuzzle: 0,
@@ -478,7 +552,7 @@
                     learnState.totalStars = 0;
                     learnState.scores = [0, 0, 0, 0, 0, 0];
                     document.getElementById('total-stars').textContent = '0';
-                    localStorage.setItem(STORAGE_KEY_STARS, '0');
+                    Preferences.set('totalStars', 0);
                     initLearn();
                 });
                 return;
@@ -570,7 +644,7 @@
                 learnState.scores[learnState.currentPuzzle] = stars;
                 learnState.totalStars = learnState.scores.reduce((a, b) => a + b, 0);
                 document.getElementById('total-stars').textContent = learnState.totalStars;
-                localStorage.setItem(STORAGE_KEY_STARS, String(learnState.totalStars));
+                Preferences.set('totalStars', learnState.totalStars);
 
                 feedback.innerHTML += ` <span class="stars">${Array(stars).fill('<span class="star">★</span>').join('')}</span>`;
                 Sound.star();

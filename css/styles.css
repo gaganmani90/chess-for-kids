@@ -304,8 +304,8 @@ h3 {
 
 .piece-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
     margin: 30px 0;
     justify-items: center;
 }
