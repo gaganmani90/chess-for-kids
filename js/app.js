@@ -695,148 +695,775 @@
             });
         }
 
-        // ===== RACE SECTION =====
-        let raceState = {
-            round: 0,
-            pieces: [null, null],
-            targetPos: null,
-            answered: false,
-            minMoves: [Infinity, Infinity]
+        // ===== SAVE THE KING SECTION =====
+        const SK_CELL = 65;
+
+        const skPuzzles = [
+            {
+                story: "The Rook is charging straight at the King!",
+                // King at e1 (7,4), enemy Rook at e8 (0,4) — check along file
+                king: [7, 4],
+                attacker: { piece: 'rook', pos: [0, 4], color: '#000' },
+                friends: [],
+                solution: 'move',
+                // Safe squares king can move to
+                safeMoves: [[7, 3], [7, 5]],
+                successText: "The King ran to safety!"
+            },
+            {
+                story: "A sneaky Bishop attacks from the diagonal!",
+                // King at e1 (7,4), enemy Bishop at b4 (4,1) — diagonal check
+                // Diagonal: (4,1)→(5,2)→(6,3)→(7,4)
+                // Rook at (5,5) can slide to (5,2) to block
+                king: [7, 4],
+                attacker: { piece: 'bishop', pos: [4, 1], color: '#000' },
+                friends: [{ piece: 'rook', pos: [5, 5] }],
+                solution: 'block',
+                blockSquare: [5, 2],
+                blockPiece: { piece: 'rook', pos: [5, 5] },
+                successText: "The Rook blocked the attack!"
+            },
+            {
+                story: "The enemy Queen is attacking! Can anyone capture her?",
+                // King at g1 (7,6), enemy Queen at g5 (3,6) — file check
+                // Knight at (5,5) can reach (3,6) via [-2,1]
+                king: [7, 6],
+                attacker: { piece: 'queen', pos: [3, 6], color: '#000' },
+                friends: [{ piece: 'knight', pos: [5, 5] }],
+                solution: 'capture',
+                capturePiece: { piece: 'knight', pos: [5, 5] },
+                successText: "The Knight captured the Queen!"
+            },
+            {
+                story: "Surrounded! The King must find the ONE safe square!",
+                // King at e1 (7,4), enemy Rook at a1 (7,0) — rank check
+                // Enemy Bishop at (5,6): attacks (6,5),(7,4),(6,7)
+                // Enemy Knight at (5,3): attacks (6,1),(6,5),(7,1),(7,5),(4,1),(4,5),(3,2),(3,4)
+                // Wait knight also attacks (6,5) and (7,5).
+                // Actually let me use a simpler approach: bishop at (5,2) covers (6,3) and a knight covers (6,4)
+                // Bishop at (5,2): attacks (6,3),(7,4),(6,1),(4,3),(4,1)
+                // Knight at (5,5): attacks (6,3)? No. Knight offsets from (5,5): (6,7),(6,3),(4,7),(4,3),(7,6),(7,4),(3,6),(3,4)
+                // Knight at (5,5) attacks (6,3)! And (7,4) — double check from knight + rook.
+                // King moves: (6,3)✗knight, (6,4), (6,5), (7,3)✗rook, (7,5)✗rook
+                // Need to also cover (6,4). Bishop at (5,2) doesn't cover (6,4).
+                // But bishop at (5,3) covers (6,4): from (5,3) going [1,1]=(6,4). Yes!
+                // Bishop at (5,3): attacks (6,4),(7,5),(6,2),(7,1),(4,4),(4,2)
+                // BUT (4,4) attacks king's current pos approach — bishop wouldn't give check since king is at (7,4)
+                // King at (7,4) moves: (6,3)✗knight@(5,5)→(6,3), (6,4)✗bishop@(5,3)→(6,4), (6,5), (7,3)✗rook, (7,5)✗rook+bishop
+                // Only (6,5) is safe!
+                king: [7, 4],
+                attacker: { piece: 'rook', pos: [7, 0], color: '#000' },
+                friends: [],
+                extraAttackers: [
+                    { piece: 'knight', pos: [5, 5], color: '#000' },
+                    { piece: 'bishop', pos: [5, 3], color: '#000' }
+                ],
+                solution: 'move',
+                safeMoves: [[6, 5]],
+                successText: "Found the only safe square!"
+            },
+            {
+                story: "The King is in check! Two escapes work — pick one!",
+                // King at e4 (4,4), enemy Rook at e8 (0,4) — file check
+                king: [4, 4],
+                attacker: { piece: 'rook', pos: [0, 4], color: '#000' },
+                friends: [
+                    { piece: 'knight', pos: [1, 3] }
+                ],
+                solution: 'any',
+                // Knight at (1,3) can reach (3,4) via L-shape — interposing on file
+                safeMoves: [[4, 3], [4, 5], [5, 3], [5, 5], [3, 3], [3, 5]],
+                blockSquare: [3, 4],
+                blockPiece: { piece: 'knight', pos: [1, 3] },
+                capturePiece: null,
+                successText: "Great choice!"
+            },
+            {
+                story: "Oh no... the King is surrounded!",
+                // Checkmate position: King at h1 (7,7), Rook at a1 (7,0), Queen at g2 (6,6)
+                king: [7, 7],
+                attacker: { piece: 'rook', pos: [7, 0], color: '#000' },
+                extraAttackers: [{ piece: 'queen', pos: [6, 6], color: '#000' }],
+                friends: [],
+                solution: 'checkmate',
+                successText: ""
+            }
+        ];
+
+        let skState = {
+            currentPuzzle: 0,
+            stars: 0,
+            attempts: 0,
+            phase: 'intro', // intro, puzzle, action, board-tap, finale, complete
+            selectedAction: null,
+            locked: false,
+            initialized: false
         };
 
-        function bfsMinMoves(piece, startRow, startCol, targetRow, targetCol) {
-            const queue = [[startRow, startCol, 0]];
-            const visited = new Set();
-            visited.add(`${startRow},${startCol}`);
-
-            while (queue.length > 0) {
-                const [row, col, dist] = queue.shift();
-
-                if (row === targetRow && col === targetCol) {
-                    return dist;
-                }
-
-                const moves = getMovesForPiece(piece, row, col);
-                for (const [nextRow, nextCol] of moves) {
-                    const key = `${nextRow},${nextCol}`;
-                    if (!visited.has(key)) {
-                        visited.add(key);
-                        queue.push([nextRow, nextCol, dist + 1]);
-                    }
-                }
-            }
-
-            return Infinity;
+        function skCellCenter(row, col) {
+            return [col * SK_CELL + SK_CELL / 2, row * SK_CELL + SK_CELL / 2];
         }
 
-        function initRace() {
-            if (raceState.round === 0) {
-                generateRaceRound();
-            }
-            renderRaceRound();
+        function skDrawBoard(svgEl, options) {
+            const { king, attacker, friends, extraAttackers, showAttackLine, dangerSquares, safeSquares, highlightSquares } = options;
+            let html = '';
 
-            document.querySelectorAll('.race-btn').forEach(btn => {
-                btn.onclick = null;
-                btn.addEventListener('click', () => {
-                    if (!raceState.answered) {
-                        const choice = parseInt(btn.dataset.choice);
-                        handleRaceAnswer(choice);
+            // Draw 8x8 board
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const isDark = (r + c) % 2 === 1;
+                    let fill = isDark ? '#B58863' : '#E8D5B5';
+
+                    // Danger squares
+                    if (dangerSquares && dangerSquares.some(([dr, dc]) => dr === r && dc === c)) {
+                        fill = isDark ? 'rgba(180,50,50,0.7)' : 'rgba(255,80,80,0.5)';
                     }
+
+                    // Safe squares
+                    if (safeSquares && safeSquares.some(([sr, sc]) => sr === r && sc === c)) {
+                        fill = isDark ? 'rgba(50,180,80,0.6)' : 'rgba(80,255,120,0.45)';
+                    }
+
+                    // Highlight squares (for tap targets)
+                    if (highlightSquares && highlightSquares.some(([hr, hc]) => hr === r && hc === c)) {
+                        fill = isDark ? 'rgba(78,205,196,0.5)' : 'rgba(78,205,196,0.35)';
+                    }
+
+                    html += `<rect x="${c * SK_CELL}" y="${r * SK_CELL}" width="${SK_CELL}" height="${SK_CELL}" fill="${fill}" class="square" data-row="${r}" data-col="${c}" style="cursor:pointer;"/>`;
+                }
+            }
+
+            // Attack line
+            if (showAttackLine && attacker && king) {
+                const [kx, ky] = skCellCenter(king[0], king[1]);
+                const [ax, ay] = skCellCenter(attacker.pos[0], attacker.pos[1]);
+                html += `<line x1="${ax}" y1="${ay}" x2="${kx}" y2="${ky}" stroke="#ff4444" stroke-width="4" stroke-dasharray="8,6" class="attack-line" opacity="0.7"/>`;
+            }
+
+            // Extra attacker lines
+            if (showAttackLine && extraAttackers && king) {
+                for (const ea of extraAttackers) {
+                    const [kx, ky] = skCellCenter(king[0], king[1]);
+                    const [eax, eay] = skCellCenter(ea.pos[0], ea.pos[1]);
+                    html += `<line x1="${eax}" y1="${eay}" x2="${kx}" y2="${ky}" stroke="#ff4444" stroke-width="4" stroke-dasharray="8,6" class="attack-line" opacity="0.5"/>`;
+                }
+            }
+
+            // Draw friends
+            if (friends) {
+                for (const f of friends) {
+                    const [fx, fy] = skCellCenter(f.pos[0], f.pos[1]);
+                    html += `<text x="${fx}" y="${fy + 16}" font-size="40" text-anchor="middle" fill="${PIECES[f.piece].color}" class="sk-friend-piece" data-piece="${f.piece}" data-row="${f.pos[0]}" data-col="${f.pos[1]}">${PIECES[f.piece].icon}</text>`;
+                }
+            }
+
+            // Draw attacker
+            if (attacker) {
+                const [ax, ay] = skCellCenter(attacker.pos[0], attacker.pos[1]);
+                html += `<text x="${ax}" y="${ay + 16}" font-size="40" text-anchor="middle" fill="${attacker.color || '#333'}" class="sk-attacker-piece" id="sk-attacker">${PIECES[attacker.piece].icon}</text>`;
+            }
+
+            // Draw extra attackers
+            if (extraAttackers) {
+                for (let i = 0; i < extraAttackers.length; i++) {
+                    const ea = extraAttackers[i];
+                    const [eax, eay] = skCellCenter(ea.pos[0], ea.pos[1]);
+                    html += `<text x="${eax}" y="${eay + 16}" font-size="40" text-anchor="middle" fill="${ea.color || '#333'}" class="sk-extra-attacker">${PIECES[ea.piece].icon}</text>`;
+                }
+            }
+
+            // Draw king (last so it's on top)
+            if (king) {
+                const [kx, ky] = skCellCenter(king[0], king[1]);
+                const kingClass = options.kingClass || '';
+                html += `<g id="sk-king-group" class="${kingClass}"><text x="${kx}" y="${ky + 16}" font-size="44" text-anchor="middle" fill="#1E88E5" id="sk-king">${PIECES.king.icon}</text></g>`;
+            }
+
+            svgEl.innerHTML = html;
+        }
+
+        // Get all squares attacked by a piece
+        function skGetAttackedSquares(piece, pos) {
+            const pd = PIECES[piece];
+            const squares = [];
+            if (pd.slides) {
+                for (const [dr, dc] of pd.offsets) {
+                    let r = pos[0] + dr, c = pos[1] + dc;
+                    while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                        squares.push([r, c]);
+                        r += dr;
+                        c += dc;
+                    }
+                }
+            } else {
+                for (const [dr, dc] of pd.offsets) {
+                    const r = pos[0] + dr, c = pos[1] + dc;
+                    if (r >= 0 && r < 8 && c >= 0 && c < 8) squares.push([r, c]);
+                }
+            }
+            return squares;
+        }
+
+        // Check if a square is attacked by any of the given attackers
+        function skIsAttacked(row, col, attackers) {
+            for (const atk of attackers) {
+                const attacked = skGetAttackedSquares(atk.piece, atk.pos);
+                if (attacked.some(([r, c]) => r === row && c === col)) return true;
+            }
+            return false;
+        }
+
+        function skGetDangerSquares(puzzle) {
+            const allAttackers = [puzzle.attacker];
+            if (puzzle.extraAttackers) allAttackers.push(...puzzle.extraAttackers);
+            const kingMoves = PIECES.king.offsets.map(([dr, dc]) => [puzzle.king[0] + dr, puzzle.king[1] + dc])
+                .filter(([r, c]) => r >= 0 && r < 8 && c >= 0 && c < 8);
+
+            return kingMoves.filter(([r, c]) => skIsAttacked(r, c, allAttackers));
+        }
+
+        function initSaveKing() {
+            if (skState.initialized) return;
+            skState.initialized = true;
+
+            // Draw intro board — King with an approaching Rook
+            const introSvg = document.getElementById('sk-intro-svg');
+            if (introSvg) {
+                skDrawBoard(introSvg, {
+                    king: [4, 4],
+                    attacker: { piece: 'rook', pos: [4, 0], color: '#333' },
+                    friends: [],
+                    showAttackLine: true,
+                    kingClass: 'king-in-check'
+                });
+            }
+
+            // Start button
+            document.getElementById('sk-start-btn').addEventListener('click', () => {
+                Sound.click();
+                skState.phase = 'puzzle';
+                skState.currentPuzzle = 0;
+                skState.stars = 0;
+                skState.attempts = 0;
+                document.getElementById('sk-intro').style.display = 'none';
+                document.getElementById('sk-puzzle').style.display = 'block';
+                skRenderPuzzle();
+            });
+
+            // Play again
+            document.getElementById('sk-play-again').addEventListener('click', () => {
+                Sound.click();
+                skState.phase = 'intro';
+                skState.currentPuzzle = 0;
+                skState.stars = 0;
+                skState.attempts = 0;
+                skState.locked = false;
+                skState.initialized = false;
+                document.getElementById('sk-complete').style.display = 'none';
+                document.getElementById('sk-finale').style.display = 'none';
+                document.getElementById('sk-puzzle').style.display = 'none';
+                document.getElementById('sk-intro').style.display = '';
+                initSaveKing();
+            });
+        }
+
+        function skRenderPuzzle() {
+            const puzzle = skPuzzles[skState.currentPuzzle];
+            skState.locked = false;
+            skState.selectedAction = null;
+            skState.attempts = 0;
+
+            document.getElementById('sk-puzzle-num').textContent = skState.currentPuzzle + 1;
+            document.getElementById('sk-puzzle-total').textContent = skPuzzles.length;
+            document.getElementById('sk-stars').textContent = skState.stars;
+            document.getElementById('sk-story-line').textContent = puzzle.story;
+
+            const statusEl = document.getElementById('sk-status');
+            const feedbackEl = document.getElementById('sk-feedback');
+            feedbackEl.textContent = '';
+            feedbackEl.className = 'sk-feedback';
+
+            // Handle checkmate puzzle differently
+            if (puzzle.solution === 'checkmate') {
+                statusEl.textContent = '';
+                skShowCheckmatePuzzle(puzzle);
+                return;
+            }
+
+            statusEl.textContent = '⚡ CHECK!';
+            statusEl.className = 'sk-status check';
+
+            Sound._play(() => {
+                Sound.init();
+                const now = Sound.ctx.currentTime;
+                // Danger sound: descending buzz
+                const osc = Sound.ctx.createOscillator();
+                const gain = Sound.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(Sound.ctx.destination);
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            });
+
+            // Draw board
+            const boardSvg = document.getElementById('sk-board');
+            const dangerSquares = skGetDangerSquares(puzzle);
+
+            skDrawBoard(boardSvg, {
+                king: puzzle.king,
+                attacker: puzzle.attacker,
+                friends: puzzle.friends,
+                extraAttackers: puzzle.extraAttackers || [],
+                showAttackLine: true,
+                dangerSquares: dangerSquares,
+                kingClass: 'king-in-check'
+            });
+
+            // Determine available actions
+            const actionsEl = document.getElementById('sk-actions');
+            const actions = [];
+
+            const canMove = puzzle.solution === 'move' || puzzle.solution === 'any';
+            const canBlock = puzzle.solution === 'block' || (puzzle.solution === 'any' && puzzle.blockPiece);
+            const canCapture = puzzle.solution === 'capture' || (puzzle.solution === 'any' && puzzle.capturePiece);
+
+            actions.push({
+                id: 'move', label: '👟 Move', icon: '👟',
+                available: canMove,
+                desc: 'Run the King to safety'
+            });
+            actions.push({
+                id: 'block', label: '🛡️ Block', icon: '🛡️',
+                available: canBlock,
+                desc: 'Place a friend in the way'
+            });
+            actions.push({
+                id: 'capture', label: '⚔️ Capture', icon: '⚔️',
+                available: canCapture,
+                desc: 'Take the attacker!'
+            });
+
+            actionsEl.innerHTML = actions.map(a =>
+                `<button class="sk-action-btn ${a.available ? 'available' : 'disabled'}" data-action="${a.id}" title="${a.desc}">${a.label}</button>`
+            ).join('');
+
+            // Handle action clicks
+            actionsEl.querySelectorAll('.sk-action-btn.available').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (skState.locked) return;
+                    Sound.click();
+                    skState.selectedAction = btn.dataset.action;
+
+                    // Highlight selected button
+                    actionsEl.querySelectorAll('.sk-action-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+
+                    skHandleAction(puzzle, btn.dataset.action);
                 });
             });
 
-            const nextBtn = document.getElementById('race-next-btn');
-            nextBtn.onclick = null;
-            nextBtn.addEventListener('click', () => {
-                raceState.round++;
-                if (raceState.round >= 5) {
-                    raceState.round = 0;
-                    raceState.answered = false;
-                    generateRaceRound();
-                } else {
-                    generateRaceRound();
-                    raceState.answered = false;
-                }
-                renderRaceRound();
+            // Handle disabled action clicks (wrong choice feedback)
+            actionsEl.querySelectorAll('.sk-action-btn.disabled').forEach(btn => {
+                btn.style.pointerEvents = 'auto';
+                btn.style.cursor = 'pointer';
+                btn.addEventListener('click', () => {
+                    if (skState.locked) return;
+                    Sound.wrong();
+                    skState.attempts++;
+                    feedbackEl.textContent = "That won't work here! Try another way.";
+                    feedbackEl.className = 'sk-feedback wrong';
+                    btn.style.animation = 'shake 0.4s ease';
+                    setTimeout(() => { btn.style.animation = ''; }, 400);
+                    setTimeout(() => {
+                        feedbackEl.textContent = '';
+                        feedbackEl.className = 'sk-feedback';
+                    }, 1200);
+                });
             });
         }
 
-        function generateRaceRound() {
-            const pieceTypes = Object.keys(PIECES);
-            const start1 = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
-            const start2 = [Math.floor(Math.random() * 3) + 3, Math.floor(Math.random() * 3) + 3];
+        function skHandleAction(puzzle, action) {
+            const boardSvg = document.getElementById('sk-board');
+            const feedbackEl = document.getElementById('sk-feedback');
 
-            raceState.pieces = [
-                pieceTypes[Math.floor(Math.random() * pieceTypes.length)],
-                pieceTypes[Math.floor(Math.random() * pieceTypes.length)]
-            ];
+            if (action === 'move') {
+                // Show safe squares and let kid tap
+                feedbackEl.textContent = "Tap a green square to move the King!";
+                feedbackEl.className = 'sk-feedback';
 
-            let targetRow, targetCol;
-            do {
-                targetRow = Math.floor(Math.random() * 6);
-                targetCol = Math.floor(Math.random() * 6);
-            } while (targetRow < 2 && targetCol < 2);
+                const dangerSquares = skGetDangerSquares(puzzle);
+                skDrawBoard(boardSvg, {
+                    king: puzzle.king,
+                    attacker: puzzle.attacker,
+                    friends: puzzle.friends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: true,
+                    dangerSquares: dangerSquares,
+                    safeSquares: puzzle.safeMoves,
+                    kingClass: 'king-in-check'
+                });
 
-            raceState.targetPos = [targetRow, targetCol];
-            raceState.minMoves = [
-                bfsMinMoves(raceState.pieces[0], start1[0], start1[1], targetRow, targetCol),
-                bfsMinMoves(raceState.pieces[1], start2[0], start2[1], targetRow, targetCol)
-            ];
+                // Listen for clicks on safe squares
+                boardSvg.querySelectorAll('rect.square').forEach(rect => {
+                    rect.addEventListener('click', function handler() {
+                        if (skState.locked) return;
+                        const r = parseInt(rect.dataset.row);
+                        const c = parseInt(rect.dataset.col);
+
+                        if (puzzle.safeMoves.some(([sr, sc]) => sr === r && sc === c)) {
+                            skState.locked = true;
+                            // Animate king moving
+                            skAnimateKingMove(puzzle, [r, c], boardSvg);
+                        } else {
+                            skState.attempts++;
+                            Sound.wrong();
+                            feedbackEl.textContent = "Not safe there! Try a green square.";
+                            feedbackEl.className = 'sk-feedback wrong';
+                            setTimeout(() => {
+                                feedbackEl.textContent = "Tap a green square to move the King!";
+                                feedbackEl.className = 'sk-feedback';
+                            }, 800);
+                        }
+                    });
+                });
+
+            } else if (action === 'block') {
+                feedbackEl.textContent = "Tap the square to block the attack!";
+                feedbackEl.className = 'sk-feedback';
+
+                const dangerSquares = skGetDangerSquares(puzzle);
+                skDrawBoard(boardSvg, {
+                    king: puzzle.king,
+                    attacker: puzzle.attacker,
+                    friends: puzzle.friends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: true,
+                    dangerSquares: dangerSquares,
+                    highlightSquares: [puzzle.blockSquare],
+                    kingClass: 'king-in-check'
+                });
+
+                boardSvg.querySelectorAll('rect.square').forEach(rect => {
+                    rect.addEventListener('click', function handler() {
+                        if (skState.locked) return;
+                        const r = parseInt(rect.dataset.row);
+                        const c = parseInt(rect.dataset.col);
+
+                        if (r === puzzle.blockSquare[0] && c === puzzle.blockSquare[1]) {
+                            skState.locked = true;
+                            skAnimateBlock(puzzle, boardSvg);
+                        } else {
+                            skState.attempts++;
+                            Sound.wrong();
+                            feedbackEl.textContent = "Not there! Find the highlighted square.";
+                            feedbackEl.className = 'sk-feedback wrong';
+                            setTimeout(() => {
+                                feedbackEl.textContent = "Tap the square to block the attack!";
+                                feedbackEl.className = 'sk-feedback';
+                            }, 800);
+                        }
+                    });
+                });
+
+            } else if (action === 'capture') {
+                feedbackEl.textContent = "Tap the attacker to capture it!";
+                feedbackEl.className = 'sk-feedback';
+
+                const dangerSquares = skGetDangerSquares(puzzle);
+                skDrawBoard(boardSvg, {
+                    king: puzzle.king,
+                    attacker: puzzle.attacker,
+                    friends: puzzle.friends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: true,
+                    dangerSquares: dangerSquares,
+                    highlightSquares: [puzzle.attacker.pos],
+                    kingClass: 'king-in-check'
+                });
+
+                // Click the attacker
+                const attackerEl = boardSvg.querySelector('#sk-attacker');
+                if (attackerEl) {
+                    attackerEl.style.cursor = 'pointer';
+                    attackerEl.addEventListener('click', function handler() {
+                        if (skState.locked) return;
+                        skState.locked = true;
+                        skAnimateCapture(puzzle, boardSvg);
+                    });
+                }
+
+                // Also listen for square click on attacker pos
+                boardSvg.querySelectorAll('rect.square').forEach(rect => {
+                    rect.addEventListener('click', function handler() {
+                        if (skState.locked) return;
+                        const r = parseInt(rect.dataset.row);
+                        const c = parseInt(rect.dataset.col);
+                        if (r === puzzle.attacker.pos[0] && c === puzzle.attacker.pos[1]) {
+                            skState.locked = true;
+                            skAnimateCapture(puzzle, boardSvg);
+                        }
+                    });
+                });
+            }
         }
 
-        function renderRaceRound() {
-            document.getElementById('race-round-number').textContent = raceState.round + 1;
-
-            for (let boardIdx = 0; boardIdx < 2; boardIdx++) {
-                const boardSvg = document.getElementById(`race-board-${boardIdx + 1}`);
-                const piece = raceState.pieces[boardIdx];
-                const startRow = Math.floor(Math.random() * 3);
-                const startCol = Math.floor(Math.random() * 3);
-                const [targetRow, targetCol] = raceState.targetPos;
-
-                boardSvg.innerHTML = `
-                    ${Array.from({ length: 6 }).map((_, row) =>
-                        Array.from({ length: 6 }).map((_, col) => {
-                            const isDark = (row + col) % 2 === 1;
-                            const fill = isDark ? '#B58863' : '#E8D5B5';
-                            const isTarget = row === targetRow && col === targetCol;
-                            const startBg = isTarget ? 'rgba(255, 0, 0, 0.3)' : fill;
-                            return `<rect x="${col * 53.33}" y="${row * 53.33}" width="53.33" height="53.33" fill="${startBg}"/>`;
-                        }).join('')
-                    ).join('')}
-                    <text x="${targetCol * 53.33 + 26.67}" y="${targetRow * 53.33 + 40}" font-size="20" text-anchor="middle" fill="#FF0000">🎯</text>
-                    <text x="${startCol * 53.33 + 26.67}" y="${startRow * 53.33 + 40}" font-size="24" text-anchor="middle" fill="${PIECES[piece].color}">${PIECES[piece].icon}</text>
-                `;
-            }
-
-            document.getElementById('race-piece-1-name').textContent = PIECES[raceState.pieces[0]].name;
-            document.getElementById('race-piece-2-name').textContent = PIECES[raceState.pieces[1]].name;
-            document.getElementById('race-btn-0-name').textContent = PIECES[raceState.pieces[0]].name;
-            document.getElementById('race-btn-1-name').textContent = PIECES[raceState.pieces[1]].name;
-
-            document.getElementById('race-result').textContent = '';
-            document.getElementById('race-result').className = 'race-result';
-            document.getElementById('race-next-btn').style.display = 'none';
+        function skAnimateKingMove(puzzle, newPos, boardSvg) {
+            // Redraw board with king at new position, no attack line, no danger
+            setTimeout(() => {
+                skDrawBoard(boardSvg, {
+                    king: newPos,
+                    attacker: puzzle.attacker,
+                    friends: puzzle.friends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: false,
+                    kingClass: 'king-saved'
+                });
+                skPuzzleSolved(puzzle);
+            }, 100);
         }
 
-        function handleRaceAnswer(choice) {
-            raceState.answered = true;
-            const result = document.getElementById('race-result');
-            const faster = raceState.minMoves[0] < raceState.minMoves[1] ? 0 : 1;
+        function skAnimateBlock(puzzle, boardSvg) {
+            // Redraw with blocking piece in new position
+            const updatedFriends = puzzle.friends.map(f => {
+                if (f.piece === puzzle.blockPiece.piece && f.pos[0] === puzzle.blockPiece.pos[0] && f.pos[1] === puzzle.blockPiece.pos[1]) {
+                    return { ...f, pos: puzzle.blockSquare };
+                }
+                return f;
+            });
 
-            if (choice === faster) {
-                const m0 = raceState.minMoves[0];
-                const m1 = raceState.minMoves[1];
-                result.textContent = '✓ Correct! ' + PIECES[raceState.pieces[faster]].name + ' is faster! (' + m0 + ' vs ' + m1 + ' moves)';
-                result.classList.add('correct');
-                Sound.correct();
-            } else {
-                result.textContent = '✗ Not quite! ' + PIECES[raceState.pieces[faster]].name + ' reaches in ' + raceState.minMoves[faster] + ' moves vs ' + raceState.minMoves[1 - faster] + ' moves.';
-                result.classList.add('incorrect');
-                Sound.wrong();
+            setTimeout(() => {
+                skDrawBoard(boardSvg, {
+                    king: puzzle.king,
+                    attacker: puzzle.attacker,
+                    friends: updatedFriends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: false,
+                    kingClass: 'king-saved'
+                });
+
+                // Flash shield icon
+                const [bx, by] = skCellCenter(puzzle.blockSquare[0], puzzle.blockSquare[1]);
+                const shield = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                shield.setAttribute('x', bx);
+                shield.setAttribute('y', by - 20);
+                shield.setAttribute('font-size', '30');
+                shield.setAttribute('text-anchor', 'middle');
+                shield.setAttribute('fill', '#4ecdc4');
+                shield.textContent = '🛡️';
+                shield.style.animation = 'shield-flash 0.8s ease forwards';
+                boardSvg.appendChild(shield);
+
+                skPuzzleSolved(puzzle);
+            }, 100);
+        }
+
+        function skAnimateCapture(puzzle, boardSvg) {
+            // Draw the capturing piece on the attacker's square, attacker gone
+            const capPiece = puzzle.capturePiece;
+            const updatedFriends = puzzle.friends.filter(f =>
+                !(f.piece === capPiece.piece && f.pos[0] === capPiece.pos[0] && f.pos[1] === capPiece.pos[1])
+            );
+            updatedFriends.push({ piece: capPiece.piece, pos: puzzle.attacker.pos });
+
+            setTimeout(() => {
+                skDrawBoard(boardSvg, {
+                    king: puzzle.king,
+                    attacker: null,
+                    friends: updatedFriends,
+                    extraAttackers: puzzle.extraAttackers || [],
+                    showAttackLine: false,
+                    kingClass: 'king-saved'
+                });
+
+                // Poof on attacker's old position
+                const [ax, ay] = skCellCenter(puzzle.attacker.pos[0], puzzle.attacker.pos[1]);
+                const poof = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                poof.setAttribute('x', ax);
+                poof.setAttribute('y', ay);
+                poof.setAttribute('font-size', '36');
+                poof.setAttribute('text-anchor', 'middle');
+                poof.textContent = '💥';
+                poof.style.animation = 'poof 0.6s ease forwards';
+                boardSvg.appendChild(poof);
+
+                skPuzzleSolved(puzzle);
+            }, 100);
+        }
+
+        function skPuzzleSolved(puzzle) {
+            Sound.correct();
+
+            const statusEl = document.getElementById('sk-status');
+            statusEl.textContent = '✓ King is safe!';
+            statusEl.className = 'sk-status safe';
+
+            const feedbackEl = document.getElementById('sk-feedback');
+            feedbackEl.textContent = puzzle.successText;
+            feedbackEl.className = 'sk-feedback correct';
+
+            // Award stars
+            let earned = 3;
+            if (skState.attempts === 1) earned = 2;
+            if (skState.attempts >= 2) earned = 1;
+            skState.stars += earned;
+            document.getElementById('sk-stars').textContent = skState.stars;
+            Sound.star();
+
+            // Show star animation
+            feedbackEl.innerHTML += ` <span class="stars">${Array(earned).fill('<span class="star">★</span>').join('')}</span>`;
+
+            // Add next button
+            const actionsEl = document.getElementById('sk-actions');
+            actionsEl.innerHTML = `<button class="btn btn-primary sk-next-btn" id="sk-next-puzzle">Next Puzzle →</button>`;
+
+            document.getElementById('sk-next-puzzle').addEventListener('click', () => {
+                Sound.click();
+                skState.currentPuzzle++;
+                if (skState.currentPuzzle >= skPuzzles.length) {
+                    // Show completion
+                    document.getElementById('sk-puzzle').style.display = 'none';
+                    document.getElementById('sk-complete').style.display = 'block';
+                    document.getElementById('sk-final-stars').textContent = skState.stars + ' ★';
+                    Sound.star();
+                } else {
+                    skRenderPuzzle();
+                }
+            });
+        }
+
+        function skShowCheckmatePuzzle(puzzle) {
+            const boardSvg = document.getElementById('sk-board');
+            const feedbackEl = document.getElementById('sk-feedback');
+            const statusEl = document.getElementById('sk-status');
+            const actionsEl = document.getElementById('sk-actions');
+
+            // Get all king moves
+            const allAttackers = [puzzle.attacker, ...(puzzle.extraAttackers || [])];
+            const kingMoves = PIECES.king.offsets
+                .map(([dr, dc]) => [puzzle.king[0] + dr, puzzle.king[1] + dc])
+                .filter(([r, c]) => r >= 0 && r < 8 && c >= 0 && c < 8);
+
+            // All are dangerous
+            const dangerSquares = kingMoves.filter(([r, c]) => skIsAttacked(r, c, allAttackers));
+
+            // Also the king's own square
+            const allDanger = [...dangerSquares, puzzle.king];
+
+            skDrawBoard(boardSvg, {
+                king: puzzle.king,
+                attacker: puzzle.attacker,
+                friends: puzzle.friends,
+                extraAttackers: puzzle.extraAttackers || [],
+                showAttackLine: true,
+                dangerSquares: allDanger,
+                kingClass: 'king-in-check'
+            });
+
+            // Danger sound
+            Sound._play(() => {
+                Sound.init();
+                const now = Sound.ctx.currentTime;
+                for (let i = 0; i < 3; i++) {
+                    const osc = Sound.ctx.createOscillator();
+                    const gain = Sound.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(Sound.ctx.destination);
+                    osc.frequency.setValueAtTime(400 - i * 100, now + i * 0.15);
+                    gain.gain.setValueAtTime(0.15, now + i * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + (i + 1) * 0.15);
+                    osc.start(now + i * 0.15);
+                    osc.stop(now + (i + 1) * 0.15);
+                }
+            });
+
+            statusEl.textContent = '⚡ CHECK!';
+            statusEl.className = 'sk-status check';
+            feedbackEl.textContent = "Can the King escape? Try tapping any square...";
+            feedbackEl.className = 'sk-feedback';
+
+            // All actions disabled
+            actionsEl.innerHTML = [
+                '<button class="sk-action-btn disabled">👟 Move</button>',
+                '<button class="sk-action-btn disabled">🛡️ Block</button>',
+                '<button class="sk-action-btn disabled">⚔️ Capture</button>'
+            ].join('');
+
+            let tapCount = 0;
+            boardSvg.querySelectorAll('rect.square').forEach(rect => {
+                rect.addEventListener('click', function handler() {
+                    if (skState.locked) return;
+                    tapCount++;
+                    Sound.wrong();
+
+                    if (tapCount === 1) {
+                        feedbackEl.textContent = "No! That square is also covered...";
+                        feedbackEl.className = 'sk-feedback wrong';
+                    } else if (tapCount === 2) {
+                        feedbackEl.textContent = "Nowhere to go...";
+                        feedbackEl.className = 'sk-feedback wrong';
+                    } else {
+                        // Trigger checkmate reveal
+                        skState.locked = true;
+                        skRevealCheckmate(puzzle, boardSvg);
+                    }
+                });
+            });
+        }
+
+        function skRevealCheckmate(puzzle, boardSvg) {
+            const statusEl = document.getElementById('sk-status');
+            const feedbackEl = document.getElementById('sk-feedback');
+            const actionsEl = document.getElementById('sk-actions');
+
+            // King falls over
+            const kingGroup = boardSvg.querySelector('#sk-king-group');
+            if (kingGroup) {
+                kingGroup.classList.remove('king-in-check');
+                kingGroup.classList.add('king-fallen');
             }
 
-            document.getElementById('race-next-btn').style.display = 'inline-block';
+            // Dramatic checkmate sound
+            Sound._play(() => {
+                Sound.init();
+                const now = Sound.ctx.currentTime;
+                // Low dramatic chord
+                const freqs = [130.81, 155.56, 196.00];
+                for (let i = 0; i < freqs.length; i++) {
+                    const osc = Sound.ctx.createOscillator();
+                    const gain = Sound.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(Sound.ctx.destination);
+                    osc.frequency.value = freqs[i];
+                    osc.type = 'sawtooth';
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                }
+            });
+
+            setTimeout(() => {
+                statusEl.textContent = '💀 CHECKMATE!';
+                statusEl.className = 'sk-status checkmate';
+
+                feedbackEl.innerHTML = '<span style="color: #ff6b6b; font-size: 18px;">No escape. No block. No capture.</span><br><span style="color: #ffd700;">That\'s the GOAL of chess — trap the King!</span>';
+                feedbackEl.className = 'sk-feedback';
+
+                actionsEl.innerHTML = `<button class="btn btn-primary sk-next-btn" id="sk-checkmate-done">I Understand! →</button>`;
+
+                document.getElementById('sk-checkmate-done').addEventListener('click', () => {
+                    Sound.click();
+                    skState.currentPuzzle++;
+                    document.getElementById('sk-puzzle').style.display = 'none';
+                    document.getElementById('sk-complete').style.display = 'block';
+                    document.getElementById('sk-final-stars').textContent = skState.stars + ' ★';
+                    Sound.star();
+                });
+            }, 1500);
         }
 
         // ===== SETUP SECTION =====
@@ -975,7 +1602,7 @@
 
             if (sectionId === 'learn') initLearn();
             if (sectionId === 'sandbox') initSandbox();
-            if (sectionId === 'race') initRace();
+            if (sectionId === 'save-king') initSaveKing();
             if (sectionId === 'setup') initSetup();
         }
 

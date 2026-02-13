@@ -17,7 +17,7 @@
             <div class="nav-buttons">
                 <button class="nav-button active" data-section="learn">Learn</button>
                 <button class="nav-button" data-section="sandbox">Sandbox</button>
-                <button class="nav-button" data-section="race">Race</button>
+                <button class="nav-button" data-section="save-king">Save the King</button>
                 <button class="nav-button" data-section="setup">Setup</button>
             </div>
             <button class="mute-btn" id="mute-btn" aria-label="Toggle sound" title="Sound on/off">🔊</button>
@@ -90,36 +90,81 @@
             </div>
         </section>
 
-        <section id="race">
+        <section id="save-king">
             <div class="container">
-                <h1>Piece vs Piece Race 🏁</h1>
+                <h1>Save the King! 🛡️</h1>
 
-                <div class="race-round">
-                    <div class="race-progress">
-                        <span>Round: <span id="race-round-number">1</span> / 5</span>
+                <div class="sk-container" id="sk-container">
+                    <!-- Intro screen -->
+                    <div class="sk-intro" id="sk-intro">
+                        <div class="sk-story-board">
+                            <svg id="sk-intro-svg" viewBox="0 0 520 520" class="sk-board-svg"></svg>
+                        </div>
+                        <div class="sk-speech-bubble" id="sk-speech">
+                            <span id="sk-speech-text">The King is in danger!</span>
+                        </div>
+                        <div class="sk-intro-text" id="sk-intro-text">
+                            <p>In chess, the goal is to trap the enemy King so it can't escape.</p>
+                            <p>That's called <strong style="color: #ff6b6b;">CHECKMATE!</strong></p>
+                            <p>But first, let's learn what <strong style="color: #ffd700;">CHECK</strong> means...</p>
+                        </div>
+                        <button class="btn btn-primary sk-start-btn" id="sk-start-btn">Let's Save the King!</button>
                     </div>
 
-                    <p style="text-align: center; color: #b0b0c0; margin-bottom: 30px;">
-                        Both pieces try to reach the 🎯 target. Which one needs fewer moves?
-                    </p>
+                    <!-- Puzzle screen -->
+                    <div class="sk-puzzle" id="sk-puzzle" style="display:none;">
+                        <div class="sk-progress">
+                            <span>Puzzle <span id="sk-puzzle-num">1</span> / <span id="sk-puzzle-total">6</span></span>
+                            <span class="sk-stars-display">★ <span id="sk-stars">0</span></span>
+                        </div>
 
-                    <div class="race-boards">
-                        <div class="race-board-container">
-                            <svg id="race-board-1" class="race-board" viewBox="0 0 320 320"></svg>
-                            <div class="race-piece-name" id="race-piece-1-name"></div>
-                            <button class="race-btn" data-choice="0" id="race-btn-0">Choose <span id="race-btn-0-name"></span></button>
+                        <div class="sk-story-line" id="sk-story-line"></div>
+
+                        <div class="sk-board-wrapper">
+                            <svg id="sk-board" viewBox="0 0 520 520" class="sk-board-svg"></svg>
                         </div>
-                        <div class="race-board-container">
-                            <svg id="race-board-2" class="race-board" viewBox="0 0 320 320"></svg>
-                            <div class="race-piece-name" id="race-piece-2-name"></div>
-                            <button class="race-btn" data-choice="1" id="race-btn-1">Choose <span id="race-btn-1-name"></span></button>
-                        </div>
+
+                        <div class="sk-status" id="sk-status"></div>
+
+                        <div class="sk-actions" id="sk-actions"></div>
+
+                        <div class="sk-feedback" id="sk-feedback"></div>
                     </div>
 
-                    <div class="race-result" id="race-result"></div>
+                    <!-- Checkmate finale -->
+                    <div class="sk-finale" id="sk-finale" style="display:none;">
+                        <div class="sk-board-wrapper">
+                            <svg id="sk-finale-board" viewBox="0 0 520 520" class="sk-board-svg"></svg>
+                        </div>
+                        <div class="sk-finale-text" id="sk-finale-text"></div>
+                    </div>
 
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button class="btn btn-primary" id="race-next-btn" style="display: none;">Next Round</button>
+                    <!-- Completion screen -->
+                    <div class="sk-complete" id="sk-complete" style="display:none;">
+                        <div class="completion-screen">
+                            <div class="confetti" aria-hidden="true">
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <h2>🛡️ King Saved! 🛡️</h2>
+                            <p style="color: #b0b0c0; margin-bottom: 12px;">You learned:</p>
+                            <div class="sk-summary">
+                                <div class="sk-summary-item">
+                                    <span style="font-size:28px;">⚡</span>
+                                    <span><strong style="color:#ffd700;">CHECK</strong> = King is under attack</span>
+                                </div>
+                                <div class="sk-summary-item">
+                                    <span style="font-size:28px;">🛡️</span>
+                                    <span>3 ways to escape: <strong>Move, Block, Capture</strong></span>
+                                </div>
+                                <div class="sk-summary-item">
+                                    <span style="font-size:28px;">💀</span>
+                                    <span><strong style="color:#ff6b6b;">CHECKMATE</strong> = No escape = Game Over!</span>
+                                </div>
+                            </div>
+                            <div class="stars-big" id="sk-final-stars">0 ★</div>
+                            <button class="btn btn-primary" id="sk-play-again">Play Again</button>
+                        </div>
                     </div>
                 </div>
             </div>
