@@ -304,27 +304,40 @@ h3 {
 
 .piece-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     margin: 30px 0;
     justify-items: center;
 }
 
 .piece-btn {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 100px;
     min-width: 48px;
     min-height: 48px;
-    border: 2px solid #2a2a4a;
-    background: transparent;
-    border-radius: 12px;
-    font-size: 48px;
+    border: 2px solid #3a3a5a;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
     cursor: pointer;
     transition: all 0.3s var(--bounce);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     animation: piece-entrance 0.4s var(--bounce) backwards;
+}
+
+.piece-btn-icon {
+    font-size: 50px;
+    line-height: 1;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5));
+}
+
+.piece-btn-label {
+    font-size: 11px;
+    color: #b0b0c0;
+    font-weight: 600;
 }
 
 .piece-btn:nth-child(1) { animation-delay: 0.05s; }
@@ -609,15 +622,16 @@ h3 {
     height: 70px;
     min-width: 48px;
     min-height: 48px;
-    border: 2px solid #2a2a4a;
-    background: transparent;
+    border: 2px solid #3a3a5a;
+    background: rgba(255, 255, 255, 0.06);
     border-radius: 10px;
-    font-size: 40px;
+    font-size: 46px;
     cursor: pointer;
     transition: all 0.3s var(--bounce);
     display: flex;
     align-items: center;
     justify-content: center;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
 }
 
 .piece-picker-btn:hover {
@@ -1024,6 +1038,44 @@ h3 {
     padding: 14px 32px;
 }
 
+/* Board dimmed state before action chosen */
+.sk-board-svg.dimmed {
+    opacity: 0.5;
+    filter: brightness(0.7);
+    pointer-events: none;
+    transition: all 0.4s ease;
+}
+
+.sk-board-svg.active-board {
+    opacity: 1;
+    filter: brightness(1);
+    pointer-events: auto;
+    transition: all 0.4s ease;
+}
+
+/* Action prompt */
+.sk-action-prompt {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #4ecdc4;
+    margin-bottom: 8px;
+    animation: prompt-bounce 1.5s ease infinite;
+}
+
+@keyframes prompt-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* Staggered button entrance */
+.sk-action-btn.entrance {
+    animation: piece-entrance 0.4s var(--bounce) backwards;
+}
+.sk-action-btn.entrance:nth-child(1) { animation-delay: 0.3s; }
+.sk-action-btn.entrance:nth-child(2) { animation-delay: 0.45s; }
+.sk-action-btn.entrance:nth-child(3) { animation-delay: 0.6s; }
+
 /* SETUP SECTION */
 .setup-board {
     width: 100%;
@@ -1104,9 +1156,16 @@ button {
 
     .piece-btn {
         width: 100%;
-        height: 70px;
-        font-size: 40px;
+        height: 80px;
         min-height: 60px;
+    }
+
+    .piece-btn-icon {
+        font-size: 42px;
+    }
+
+    .piece-btn-label {
+        font-size: 10px;
     }
 
     .sk-container {
@@ -1244,9 +1303,16 @@ button {
 
     .piece-btn {
         width: 100%;
-        height: 64px;
-        font-size: 36px;
+        height: 72px;
         border-radius: 10px;
+    }
+
+    .piece-btn-icon {
+        font-size: 36px;
+    }
+
+    .piece-btn-label {
+        font-size: 9px;
     }
 
     .piece-picker-btn {

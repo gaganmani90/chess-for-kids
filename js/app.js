@@ -106,56 +106,74 @@
         });
 
         // ===== PIECE DATA =====
+        // White pieces use bright white with colored accents; black pieces use filled unicode
+        const WHITE_COLOR = '#FFFFFF';
+        const BLACK_COLOR = '#222222';
+        const ENEMY_COLOR = '#E53935'; // bright red for enemy pieces
+
         const PIECES = {
             king: {
-                icon: '♔',
+                icon: '♔', blackIcon: '♚',
                 name: 'King',
-                color: '#1E88E5',
+                color: WHITE_COLOR,
+                accentColor: '#64B5F6',
                 offsets: [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]],
                 slides: false,
                 description: 'The King is the most important piece. It moves one square in any direction.'
             },
             queen: {
-                icon: '♕',
+                icon: '♕', blackIcon: '♛',
                 name: 'Queen',
-                color: '#F57F17',
+                color: WHITE_COLOR,
+                accentColor: '#FFD54F',
                 offsets: [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]],
                 slides: true,
                 description: 'The Queen is the most powerful piece. It moves any number of squares in any direction.'
             },
             rook: {
-                icon: '♖',
+                icon: '♖', blackIcon: '♜',
                 name: 'Rook',
-                color: '#E91E63',
+                color: WHITE_COLOR,
+                accentColor: '#EF5350',
                 offsets: [[0, 1], [0, -1], [1, 0], [-1, 0]],
                 slides: true,
                 description: 'The Rook moves any number of squares horizontally or vertically.'
             },
             bishop: {
-                icon: '♗',
+                icon: '♗', blackIcon: '♝',
                 name: 'Bishop',
-                color: '#26A69A',
+                color: WHITE_COLOR,
+                accentColor: '#66BB6A',
                 offsets: [[1, 1], [1, -1], [-1, 1], [-1, -1]],
                 slides: true,
                 description: 'The Bishop moves any number of squares diagonally.'
             },
             knight: {
-                icon: '♘',
+                icon: '♘', blackIcon: '♞',
                 name: 'Knight',
-                color: '#AB47BC',
+                color: WHITE_COLOR,
+                accentColor: '#AB47BC',
                 offsets: [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]],
                 slides: false,
                 description: 'The Knight moves in an L-shape: 2 squares in one direction and 1 square perpendicular. It can jump over pieces!'
             },
             pawn: {
-                icon: '♙',
+                icon: '♙', blackIcon: '♟',
                 name: 'Pawn',
-                color: '#42A5F5',
+                color: WHITE_COLOR,
+                accentColor: '#90CAF9',
                 offsets: [[0, -1]],
                 slides: false,
                 description: 'The Pawn moves forward one square (or two squares from its starting position).'
             }
         };
+
+        // Helper: SVG text with stroke outline for visibility
+        function svgPiece(x, y, icon, fill, fontSize, extra) {
+            const stroke = fill === WHITE_COLOR ? '#333' : '#FFF';
+            const strokeW = fill === WHITE_COLOR ? 1.5 : 0.8;
+            return `<text x="${x}" y="${y}" font-size="${fontSize}" text-anchor="middle" fill="${fill}" stroke="${stroke}" stroke-width="${strokeW}" paint-order="stroke" ${extra || ''}>${icon}</text>`;
+        }
 
         // ===== LEARN SECTION SCENES =====
         const learnData = {
@@ -475,7 +493,8 @@
                 <div class="piece-buttons">
                     ${Object.entries(PIECES).map(([key, piece]) => `
                         <button class="piece-btn" data-piece="${key}" title="${piece.name}">
-                            ${piece.icon}
+                            <span class="piece-btn-icon">${piece.icon}</span>
+                            <span class="piece-btn-label">${piece.name}</span>
                         </button>
                     `).join('')}
                 </div>
@@ -491,7 +510,7 @@
                                 return `<rect x="${col * 30}" y="${row * 30}" width="30" height="30" fill="${fill}"/>`;
                             }).join('')
                         ).join('')}
-                        <text x="60" y="75" font-size="28" fill="${PIECES[puzzle.piece].color}">${PIECES[puzzle.piece].icon}</text>
+                        ${svgPiece(75, 85, PIECES[puzzle.piece].icon, WHITE_COLOR, 34)}
                         ${Array.from(getMovesForPiece(puzzle.piece, 2, 2)).map(([r, c]) =>
                             `<circle cx="${c * 30 + 15}" cy="${r * 30 + 15}" r="4" fill="#FF0000" opacity="0.6"/>`
                         ).join('')}
@@ -683,15 +702,9 @@
                     board.appendChild(circle);
                 });
 
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', col * 65 + 32.5);
-                text.setAttribute('y', row * 65 + 50);
-                text.setAttribute('font-size', '40');
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('fill', PIECES[piece].color);
-                text.textContent = PIECES[piece].icon;
-                text.classList.add('piece-marker');
-                board.appendChild(text);
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.innerHTML = svgPiece(col * 65 + 32.5, row * 65 + 52, PIECES[piece].icon, WHITE_COLOR, 50, 'class="piece-marker"');
+                board.appendChild(g.firstChild);
             });
         }
 
@@ -703,7 +716,7 @@
                 story: "The Rook is charging straight at the King!",
                 // King at e1 (7,4), enemy Rook at e8 (0,4) — check along file
                 king: [7, 4],
-                attacker: { piece: 'rook', pos: [0, 4], color: '#000' },
+                attacker: { piece: 'rook', pos: [0, 4] },
                 friends: [],
                 solution: 'move',
                 // Safe squares king can move to
@@ -716,7 +729,7 @@
                 // Diagonal: (4,1)→(5,2)→(6,3)→(7,4)
                 // Rook at (5,5) can slide to (5,2) to block
                 king: [7, 4],
-                attacker: { piece: 'bishop', pos: [4, 1], color: '#000' },
+                attacker: { piece: 'bishop', pos: [4, 1] },
                 friends: [{ piece: 'rook', pos: [5, 5] }],
                 solution: 'block',
                 blockSquare: [5, 2],
@@ -728,7 +741,7 @@
                 // King at g1 (7,6), enemy Queen at g5 (3,6) — file check
                 // Knight at (5,5) can reach (3,6) via [-2,1]
                 king: [7, 6],
-                attacker: { piece: 'queen', pos: [3, 6], color: '#000' },
+                attacker: { piece: 'queen', pos: [3, 6] },
                 friends: [{ piece: 'knight', pos: [5, 5] }],
                 solution: 'capture',
                 capturePiece: { piece: 'knight', pos: [5, 5] },
@@ -752,11 +765,11 @@
                 // King at (7,4) moves: (6,3)✗knight@(5,5)→(6,3), (6,4)✗bishop@(5,3)→(6,4), (6,5), (7,3)✗rook, (7,5)✗rook+bishop
                 // Only (6,5) is safe!
                 king: [7, 4],
-                attacker: { piece: 'rook', pos: [7, 0], color: '#000' },
+                attacker: { piece: 'rook', pos: [7, 0] },
                 friends: [],
                 extraAttackers: [
-                    { piece: 'knight', pos: [5, 5], color: '#000' },
-                    { piece: 'bishop', pos: [5, 3], color: '#000' }
+                    { piece: 'knight', pos: [5, 5] },
+                    { piece: 'bishop', pos: [5, 3] }
                 ],
                 solution: 'move',
                 safeMoves: [[6, 5]],
@@ -766,7 +779,7 @@
                 story: "The King is in check! Two escapes work — pick one!",
                 // King at e4 (4,4), enemy Rook at e8 (0,4) — file check
                 king: [4, 4],
-                attacker: { piece: 'rook', pos: [0, 4], color: '#000' },
+                attacker: { piece: 'rook', pos: [0, 4] },
                 friends: [
                     { piece: 'knight', pos: [1, 3] }
                 ],
@@ -782,8 +795,8 @@
                 story: "Oh no... the King is surrounded!",
                 // Checkmate position: King at h1 (7,7), Rook at a1 (7,0), Queen at g2 (6,6)
                 king: [7, 7],
-                attacker: { piece: 'rook', pos: [7, 0], color: '#000' },
-                extraAttackers: [{ piece: 'queen', pos: [6, 6], color: '#000' }],
+                attacker: { piece: 'rook', pos: [7, 0] },
+                extraAttackers: [{ piece: 'queen', pos: [6, 6] }],
                 friends: [],
                 solution: 'checkmate',
                 successText: ""
@@ -849,34 +862,34 @@
                 }
             }
 
-            // Draw friends
+            // Draw friends (white pieces — big, bright, outlined)
             if (friends) {
                 for (const f of friends) {
                     const [fx, fy] = skCellCenter(f.pos[0], f.pos[1]);
-                    html += `<text x="${fx}" y="${fy + 16}" font-size="40" text-anchor="middle" fill="${PIECES[f.piece].color}" class="sk-friend-piece" data-piece="${f.piece}" data-row="${f.pos[0]}" data-col="${f.pos[1]}">${PIECES[f.piece].icon}</text>`;
+                    html += svgPiece(fx, fy + 18, PIECES[f.piece].icon, WHITE_COLOR, 54, `class="sk-friend-piece" data-piece="${f.piece}" data-row="${f.pos[0]}" data-col="${f.pos[1]}"`);
                 }
             }
 
-            // Draw attacker
+            // Draw attacker (red/black — filled icons, bright red, big)
             if (attacker) {
                 const [ax, ay] = skCellCenter(attacker.pos[0], attacker.pos[1]);
-                html += `<text x="${ax}" y="${ay + 16}" font-size="40" text-anchor="middle" fill="${attacker.color || '#333'}" class="sk-attacker-piece" id="sk-attacker">${PIECES[attacker.piece].icon}</text>`;
+                html += `<text x="${ax}" y="${ay + 18}" font-size="54" text-anchor="middle" fill="${ENEMY_COLOR}" stroke="#000" stroke-width="0.5" paint-order="stroke" class="sk-attacker-piece" id="sk-attacker">${PIECES[attacker.piece].blackIcon}</text>`;
             }
 
-            // Draw extra attackers
+            // Draw extra attackers (same red style)
             if (extraAttackers) {
                 for (let i = 0; i < extraAttackers.length; i++) {
                     const ea = extraAttackers[i];
                     const [eax, eay] = skCellCenter(ea.pos[0], ea.pos[1]);
-                    html += `<text x="${eax}" y="${eay + 16}" font-size="40" text-anchor="middle" fill="${ea.color || '#333'}" class="sk-extra-attacker">${PIECES[ea.piece].icon}</text>`;
+                    html += `<text x="${eax}" y="${eay + 18}" font-size="54" text-anchor="middle" fill="${ENEMY_COLOR}" stroke="#000" stroke-width="0.5" paint-order="stroke" class="sk-extra-attacker">${PIECES[ea.piece].blackIcon}</text>`;
                 }
             }
 
-            // Draw king (last so it's on top)
+            // Draw king (last so it's on top — biggest piece, white with blue glow)
             if (king) {
                 const [kx, ky] = skCellCenter(king[0], king[1]);
                 const kingClass = options.kingClass || '';
-                html += `<g id="sk-king-group" class="${kingClass}"><text x="${kx}" y="${ky + 16}" font-size="44" text-anchor="middle" fill="#1E88E5" id="sk-king">${PIECES.king.icon}</text></g>`;
+                html += `<g id="sk-king-group" class="${kingClass}"><text x="${kx}" y="${ky + 18}" font-size="58" text-anchor="middle" fill="${WHITE_COLOR}" stroke="#1565C0" stroke-width="2" paint-order="stroke" id="sk-king">${PIECES.king.icon}</text></g>`;
             }
 
             svgEl.innerHTML = html;
@@ -931,7 +944,7 @@
             if (introSvg) {
                 skDrawBoard(introSvg, {
                     king: [4, 4],
-                    attacker: { piece: 'rook', pos: [4, 0], color: '#333' },
+                    attacker: { piece: 'rook', pos: [4, 0] },
                     friends: [],
                     showAttackLine: true,
                     kingClass: 'king-in-check'
@@ -1023,7 +1036,10 @@
                 kingClass: 'king-in-check'
             });
 
-            // Determine available actions
+            // Phase 1: Board is dimmed, show action buttons with prompt
+            boardSvg.classList.add('dimmed');
+            boardSvg.classList.remove('active-board');
+
             const actionsEl = document.getElementById('sk-actions');
             const actions = [];
 
@@ -1047,8 +1063,9 @@
                 desc: 'Take the attacker!'
             });
 
-            actionsEl.innerHTML = actions.map(a =>
-                `<button class="sk-action-btn ${a.available ? 'available' : 'disabled'}" data-action="${a.id}" title="${a.desc}">${a.label}</button>`
+            actionsEl.innerHTML = `<div class="sk-action-prompt">↓ How will you save the King? ↓</div>` +
+                actions.map(a =>
+                `<button class="sk-action-btn entrance ${a.available ? 'available' : 'disabled'}" data-action="${a.id}" title="${a.desc}">${a.label}</button>`
             ).join('');
 
             // Handle action clicks
@@ -1089,6 +1106,12 @@
         function skHandleAction(puzzle, action) {
             const boardSvg = document.getElementById('sk-board');
             const feedbackEl = document.getElementById('sk-feedback');
+
+            // Phase 2: activate the board, remove prompt
+            boardSvg.classList.remove('dimmed');
+            boardSvg.classList.add('active-board');
+            const prompt = document.querySelector('.sk-action-prompt');
+            if (prompt) prompt.remove();
 
             if (action === 'move') {
                 // Show safe squares and let kid tap
@@ -1508,18 +1531,26 @@
 
             Object.entries(startingPosition).forEach(([key, piece]) => {
                 const [row, col] = key.split(',').map(Number);
+                const isBlack = row < 2;
+                const icon = isBlack ? PIECES[piece].blackIcon : PIECES[piece].icon;
+                const fill = isBlack ? BLACK_COLOR : WHITE_COLOR;
+                const stroke = isBlack ? '#FFF' : '#333';
+
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttribute('x', col * 65 + 32.5);
-                text.setAttribute('y', row * 65 + 50);
-                text.setAttribute('font-size', '40');
+                text.setAttribute('y', row * 65 + 52);
+                text.setAttribute('font-size', '50');
                 text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('fill', row < 2 ? '#000' : '#FFF');
+                text.setAttribute('fill', fill);
+                text.setAttribute('stroke', stroke);
+                text.setAttribute('stroke-width', isBlack ? '0.8' : '1.5');
+                text.setAttribute('paint-order', 'stroke');
                 text.setAttribute('class', `piece-marker setup-piece`);
                 text.setAttribute('data-piece', piece);
                 text.setAttribute('data-row', row);
                 text.setAttribute('data-col', col);
                 text.setAttribute('style', 'cursor: pointer;');
-                text.textContent = PIECES[piece].icon;
+                text.textContent = icon;
 
                 text.addEventListener('click', (e) => {
                     e.stopPropagation();
