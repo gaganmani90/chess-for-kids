@@ -167,6 +167,22 @@
             }
         };
 
+        // Text-to-Speech function
+        function speak(text) {
+            if (soundMuted) return;
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9; // Slightly slower for clarity
+                utterance.pitch = 1.1; // Slightly higher pitch for friendliness
+                utterance.volume = 1.0;
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         const muteBtn = document.getElementById('mute-btn');
         muteBtn.textContent = soundMuted ? '🔇' : '🔊';
         muteBtn.classList.toggle('muted', soundMuted);
@@ -177,6 +193,11 @@
             muteBtn.classList.toggle('muted', soundMuted);
             muteBtn.setAttribute('aria-label', soundMuted ? 'Sound off - tap to unmute' : 'Sound on - tap to mute');
             muteBtn.setAttribute('title', soundMuted ? 'Sound off' : 'Sound on');
+            
+            // Stop any ongoing speech when muting
+            if (soundMuted && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
         });
 
         // ===== PIECE DATA =====
@@ -636,6 +657,10 @@
                 feedback.textContent = '✓ Correct!';
                 feedback.classList.add('correct');
                 Sound.correct();
+                
+                // Speak the piece name
+                const pieceName = PIECES[correct].name;
+                setTimeout(() => speak(pieceName), 300);
 
                 let stars = 3;
                 if (currentAttempt === 1) stars = 2;
