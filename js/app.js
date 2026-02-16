@@ -275,217 +275,949 @@
             easy: [
                 {
                     piece: 'pawn',
-                    title: 'A student walking to school',
+                    title: 'The Brave Little Soldier',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#87CEEB"/>
-                        <rect y="200" width="520" height="100" fill="#90EE90"/>
-                        <circle cx="260" cy="100" r="20" fill="#FFB6C1"/>
-                        <rect x="250" y="120" width="20" height="40" fill="#FFB6C1"/>
-                        <rect x="240" y="160" width="10" height="30" fill="#FFB6C1"/>
-                        <rect x="270" y="160" width="10" height="30" fill="#FFB6C1"/>
-                        <line x1="260" y1="120" x2="240" y2="150" stroke="#FFB6C1" stroke-width="8"/>
-                        <line x1="260" y1="120" x2="280" y2="150" stroke="#FFB6C1" stroke-width="8"/>
-                        <line x1="100" y1="220" x2="420" y2="220" stroke="#8B4513" stroke-width="3"/>
-                        <circle cx="100" cy="220" r="8" fill="#FFD700"/>
-                        <circle cx="200" cy="220" r="8" fill="#FFD700"/>
-                        <circle cx="300" cy="220" r="8" fill="#FFD700"/>
-                        <circle cx="400" cy="220" r="8" fill="#FFD700"/>
-                        <text x="260" y="260" font-size="20" text-anchor="middle" fill="#333">Moving straight ahead one step at a time</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="pe-skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="pe-castleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#D4A574;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#8B6F47;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="pe-soldierGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#C92A2A;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="pe-pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#FFA500;stop-opacity:0.8" />
+      </linearGradient>
+    </defs>
+    <!-- Sky background -->
+    <rect width="520" height="300" fill="url(#pe-skyGradient)"/>
+    <!-- Distant castle -->
+    <ellipse cx="450" cy="140" rx="40" ry="80" fill="url(#pe-castleGradient)" opacity="0.6"/>
+    <rect x="430" y="100" width="10" height="40" fill="#8B6F47" opacity="0.5"/>
+    <rect x="450" y="90" width="10" height="50" fill="#8B6F47" opacity="0.5"/>
+    <rect x="470" y="100" width="10" height="40" fill="#8B6F47" opacity="0.5"/>
+    <!-- Meadow grass -->
+    <rect x="0" y="200" width="520" height="100" fill="#6BA834"/>
+    <!-- Grass texture -->
+    <ellipse cx="80" cy="220" rx="60" ry="20" fill="#5C9428"/>
+    <ellipse cx="200" cy="230" rx="70" ry="25" fill="#5C9428"/>
+    <ellipse cx="350" cy="225" rx="65" ry="22" fill="#5C9428"/>
+    <!-- Cobblestone path -->
+    <rect x="0" y="180" width="520" height="30" fill="#C0C0C0" opacity="0.7"/>
+    <line x1="60" y1="180" x2="60" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="120" y1="180" x2="120" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="180" y1="180" x2="180" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="240" y1="180" x2="240" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="300" y1="180" x2="300" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="360" y1="180" x2="360" y2="210" stroke="#808080" stroke-width="2"/>
+    <line x1="420" y1="180" x2="420" y2="210" stroke="#808080" stroke-width="2"/>
+    <!-- Footprints (showing one step at a time) -->
+    <ellipse cx="100" cy="195" rx="6" ry="8" fill="#8B7355" opacity="0.5"/>
+    <ellipse cx="150" cy="195" rx="6" ry="8" fill="#8B7355" opacity="0.6"/>
+    <!-- Forward movement arrow -->
+    <defs>
+      <marker id="pe-arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#FFD700" />
+      </marker>
+    </defs>
+    <line x1="200" y1="140" x2="380" y2="140" stroke="#FFD700" stroke-width="4" marker-end="url(#pe-arrowhead)"/>
+    <!-- Flowers along the path -->
+    <circle cx="130" cy="250" r="4" fill="#FF69B4"/>
+    <circle cx="125" cy="245" r="3" fill="#FFB6C1"/>
+    <circle cx="135" cy="245" r="3" fill="#FFB6C1"/>
+    <circle cx="280" cy="260" r="4" fill="#FF1493"/>
+    <circle cx="275" cy="255" r="3" fill="#FFB6C1"/>
+    <circle cx="285" cy="255" r="3" fill="#FFB6C1"/>
+    <circle cx="420" cy="250" r="4" fill="#FF69B4"/>
+    <circle cx="415" cy="245" r="3" fill="#FFB6C1"/>
+    <circle cx="425" cy="245" r="3" fill="#FFB6C1"/>
+    <!-- Little soldier character -->
+    <!-- Helmet -->
+    <circle cx="250" cy="130" r="18" fill="#C0C0C0"/>
+    <ellipse cx="250" cy="135" rx="20" ry="8" fill="#A9A9A9"/>
+    <!-- Face -->
+    <circle cx="250" cy="145" r="14" fill="#FDBCB4"/>
+    <!-- Eyes -->
+    <circle cx="244" cy="142" r="2" fill="#000"/>
+    <circle cx="256" cy="142" r="2" fill="#000"/>
+    <!-- Mouth -->
+    <path d="M 248 150 Q 250 152 252 150" stroke="#FF69B4" stroke-width="1.5" fill="none"/>
+    <!-- Body (tunic) -->
+    <rect x="235" y="160" width="30" height="25" rx="3" fill="url(#pe-soldierGradient)"/>
+    <!-- Shield -->
+    <path d="M 220 160 L 215 175 L 220 185 L 225 175 Z" fill="#4169E1"/>
+    <!-- Legs -->
+    <rect x="240" y="185" width="6" height="18" fill="#8B6F47"/>
+    <rect x="254" y="185" width="6" height="18" fill="#8B6F47"/>
+    <!-- Feet -->
+    <ellipse cx="243" cy="205" rx="5" ry="4" fill="#000"/>
+    <ellipse cx="257" cy="205" rx="5" ry="4" fill="#000"/>
+    <!-- Spear -->
+    <line x1="268" y1="155" x2="280" y2="120" stroke="#DAA520" stroke-width="3"/>
+    <polygon points="280,120 285,125 275,125" fill="#FFD700"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="0.5">One Step Forward</text>
+  </svg>`
                 },
                 {
                     piece: 'rook',
-                    title: 'A student in a hallway',
+                    title: 'The Castle Tower',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#D3D3D3"/>
-                        <rect x="50" y="50" width="400" height="200" fill="#C0C0C0" stroke="#999" stroke-width="2"/>
-                        <circle cx="260" cy="150" r="20" fill="#FFB6C1"/>
-                        <rect x="250" y="170" width="20" height="40" fill="#FFB6C1"/>
-                        <line x1="260" y1="100" x2="260" y2="50" stroke="#FF0000" stroke-width="3"/>
-                        <line x1="260" y1="200" x2="260" y2="250" stroke="#FF0000" stroke-width="3"/>
-                        <line x1="100" y1="150" x2="50" y2="150" stroke="#FF0000" stroke-width="3"/>
-                        <line x1="420" y1="150" x2="470" y2="150" stroke="#FF0000" stroke-width="3"/>
-                        <text x="260" y="280" font-size="20" text-anchor="middle" fill="#333">Moving in 4 directions: up, down, left, right</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="re-nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#0A0E27;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1B2845;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="re-towerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="re-lightBeam" x1="0%" y1="50%" x2="100%" y2="50%">
+        <stop offset="0%" style="stop-color:#FFFF99;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#FFFF99;stop-opacity:0.4" />
+        <stop offset="100%" style="stop-color:#FFFF99;stop-opacity:0" />
+      </linearGradient>
+    </defs>
+    <!-- Night sky -->
+    <rect width="520" height="300" fill="url(#re-nightSky)"/>
+    <!-- Stars -->
+    <circle cx="50" cy="40" r="2" fill="#FFF"/>
+    <circle cx="120" cy="30" r="1.5" fill="#FFF"/>
+    <circle cx="200" cy="50" r="1" fill="#FFF"/>
+    <circle cx="320" cy="35" r="1.5" fill="#FFF"/>
+    <circle cx="420" cy="60" r="2" fill="#FFF"/>
+    <circle cx="480" cy="25" r="1" fill="#FFF"/>
+    <circle cx="100" cy="120" r="1" fill="#FFF"/>
+    <circle cx="450" cy="100" r="1.5" fill="#FFF"/>
+    <!-- Ground -->
+    <rect x="0" y="240" width="520" height="60" fill="#0F1B3C"/>
+    <!-- Castle tower -->
+    <rect x="210" y="100" width="100" height="180" fill="url(#re-towerGradient)" stroke="#8B6914" stroke-width="2"/>
+    <!-- Tower crenellations (top) -->
+    <rect x="210" y="100" width="15" height="20" fill="url(#re-towerGradient)"/>
+    <rect x="235" y="100" width="15" height="20" fill="url(#re-towerGradient)"/>
+    <rect x="260" y="100" width="15" height="20" fill="url(#re-towerGradient)"/>
+    <rect x="285" y="100" width="15" height="20" fill="url(#re-towerGradient)"/>
+    <!-- Tower windows -->
+    <rect x="230" y="140" width="12" height="12" fill="#000" opacity="0.6"/>
+    <rect x="278" y="140" width="12" height="12" fill="#000" opacity="0.6"/>
+    <rect x="230" y="190" width="12" height="12" fill="#FF9500" opacity="0.7"/>
+    <rect x="278" y="190" width="12" height="12" fill="#FF9500" opacity="0.7"/>
+    <!-- Light beams (4 cardinal directions) -->
+    <!-- Up -->
+    <polygon points="260,100 250,20 270,20" fill="url(#re-lightBeam)" opacity="0.7"/>
+    <!-- Down -->
+    <polygon points="250,280 240,240 280,240" fill="url(#re-lightBeam)" opacity="0.7"/>
+    <!-- Left -->
+    <polygon points="210,150 40,140 40,160" fill="url(#re-lightBeam)" opacity="0.7"/>
+    <!-- Right -->
+    <polygon points="310,150 480,140 480,160" fill="url(#re-lightBeam)" opacity="0.7"/>
+    <!-- Guard on tower -->
+    <!-- Head -->
+    <circle cx="260" cy="115" r="8" fill="#FDBCB4"/>
+    <!-- Helmet -->
+    <path d="M 252 110 L 268 110 L 266 105 L 254 105 Z" fill="#C0C0C0"/>
+    <!-- Body -->
+    <rect x="256" y="125" width="8" height="12" fill="#FF6B6B"/>
+    <!-- Arms -->
+    <line x1="256" y1="130" x2="245" y2="128" stroke="#FDBCB4" stroke-width="2"/>
+    <line x1="264" y1="130" x2="275" y2="128" stroke="#FDBCB4" stroke-width="2"/>
+    <!-- Spear -->
+    <line x1="275" y1="128" x2="285" y2="95" stroke="#DAA520" stroke-width="2"/>
+    <polygon points="285,95 287,102 280,100" fill="#FFD700"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFF99" stroke="#000" stroke-width="0.5">Straight Lines Everywhere</text>
+  </svg>`
                 },
                 {
                     piece: 'knight',
-                    title: 'A student jumping obstacles',
+                    title: 'The Magical Horse',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#87CEEB"/>
-                        <circle cx="260" cy="120" r="20" fill="#FFB6C1"/>
-                        <rect x="250" y="140" width="20" height="40" fill="#FFB6C1"/>
-                        <rect x="100" y="180" width="40" height="40" fill="#8B4513"/>
-                        <rect x="320" y="160" width="40" height="40" fill="#8B4513"/>
-                        <rect x="200" y="220" width="40" height="30" fill="#8B4513"/>
-                        <line x1="260" y1="140" x2="300" y2="160" stroke="#4169E1" stroke-width="3" stroke-dasharray="5,5"/>
-                        <line x1="300" y1="160" x2="340" y2="140" stroke="#4169E1" stroke-width="3" stroke-dasharray="5,5"/>
-                        <path d="M 260 140 Q 300 120 340 140" stroke="#FFD700" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <text x="260" y="280" font-size="18" text-anchor="middle" fill="#333">Jumping in an L-shape: 2+1 squares</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="ne-skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="ne-horseBrown" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#8B5A3C;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#5C3317;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="ne-sparkleGold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#FFA500;stop-opacity:0.7" />
+      </linearGradient>
+    </defs>
+    <!-- Sky -->
+    <rect width="520" height="300" fill="url(#ne-skyGrad)"/>
+    <!-- Clouds -->
+    <ellipse cx="100" cy="80" rx="40" ry="20" fill="#FFFFFF" opacity="0.8"/>
+    <ellipse cx="130" cy="75" rx="35" ry="18" fill="#FFFFFF" opacity="0.8"/>
+    <ellipse cx="420" cy="90" rx="45" ry="22" fill="#FFFFFF" opacity="0.7"/>
+    <!-- Ground/Meadow -->
+    <rect x="0" y="200" width="520" height="100" fill="#6BA834"/>
+    <!-- Grass details -->
+    <ellipse cx="200" cy="220" rx="80" ry="25" fill="#5C9428"/>
+    <!-- Fence -->
+    <line x1="150" y1="200" x2="380" y2="200" stroke="#8B6F47" stroke-width="3"/>
+    <line x1="160" y1="180" x2="160" y2="220" stroke="#8B6F47" stroke-width="2"/>
+    <line x1="200" y1="175" x2="200" y2="225" stroke="#8B6F47" stroke-width="2"/>
+    <line x1="240" y1="175" x2="240" y2="225" stroke="#8B6F47" stroke-width="2"/>
+    <line x1="280" y1="175" x2="280" y2="225" stroke="#8B6F47" stroke-width="2"/>
+    <line x1="320" y1="180" x2="320" y2="220" stroke="#8B6F47" stroke-width="2"/>
+    <line x1="360" y1="185" x2="360" y2="215" stroke="#8B6F47" stroke-width="2"/>
+    <!-- L-shaped sparkle trail -->
+    <path d="M 320 240 L 320 100 L 420 100" stroke="url(#ne-sparkleGold)" stroke-width="8" fill="none" opacity="0.6" stroke-linecap="round"/>
+    <!-- Sparkles on trail -->
+    <circle cx="320" cy="160" r="4" fill="#FFD700" opacity="0.8"/>
+    <circle cx="320" cy="120" r="3" fill="#FFA500" opacity="0.7"/>
+    <circle cx="360" cy="100" r="4" fill="#FFD700" opacity="0.8"/>
+    <circle cx="400" cy="100" r="3" fill="#FFA500" opacity="0.7"/>
+    <!-- Horse character -->
+    <!-- Body -->
+    <ellipse cx="410" cy="90" rx="30" ry="25" fill="url(#ne-horseBrown)"/>
+    <!-- Neck -->
+    <path d="M 395 85 Q 385 70 380 50" stroke="url(#ne-horseBrown)" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <!-- Head -->
+    <circle cx="378" cy="45" r="14" fill="url(#ne-horseBrown)"/>
+    <!-- Ear -->
+    <polygon points="380,28 375,18 382,25" fill="url(#ne-horseBrown)"/>
+    <!-- Muzzle -->
+    <ellipse cx="365" cy="48" rx="8" ry="6" fill="#A0714F"/>
+    <!-- Eye -->
+    <circle cx="375" cy="42" r="2" fill="#000"/>
+    <!-- Flowing mane -->
+    <path d="M 380 30 Q 375 35 375 45" stroke="#FFD700" stroke-width="4" fill="none" opacity="0.8" stroke-linecap="round"/>
+    <path d="M 385 28 Q 382 38 380 50" stroke="#FFD700" stroke-width="3" fill="none" opacity="0.7" stroke-linecap="round"/>
+    <!-- Legs in jumping pose -->
+    <line x1="400" y1="110" x2="395" y2="140" stroke="url(#ne-horseBrown)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="420" y1="115" x2="428" y2="145" stroke="url(#ne-horseBrown)" stroke-width="6" stroke-linecap="round"/>
+    <!-- Tail -->
+    <path d="M 440 95 Q 460 85 470 75" stroke="#FFD700" stroke-width="5" fill="none" opacity="0.8" stroke-linecap="round"/>
+    <!-- Hooves -->
+    <ellipse cx="395" cy="140" rx="3" ry="4" fill="#000"/>
+    <ellipse cx="428" cy="145" rx="3" ry="4" fill="#000"/>
+    <!-- Watching animals -->
+    <!-- Small rabbit -->
+    <circle cx="80" cy="240" r="8" fill="#A0714F"/>
+    <circle cx="82" cy="238" r="6" fill="#8B5A3C"/>
+    <ellipse cx="78" cy="230" rx="2" ry="5" fill="#A0714F"/>
+    <ellipse cx="86" cy="230" rx="2" ry="5" fill="#A0714F"/>
+    <!-- Butterfly -->
+    <circle cx="120" cy="120" r="2" fill="#FFB6C1"/>
+    <ellipse cx="110" cy="115" rx="5" ry="7" fill="#FF69B4" opacity="0.8"/>
+    <ellipse cx="130" cy="115" rx="5" ry="7" fill="#FF69B4" opacity="0.8"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="0.5">Jump in an L-Shape</text>
+  </svg>`
                 },
                 {
                     piece: 'bishop',
-                    title: 'A student exploring interests',
+                    title: 'The Diagonal Explorer',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#F0E68C"/>
-                        <circle cx="260" cy="150" r="20" fill="#FFB6C1"/>
-                        <rect x="250" y="170" width="20" height="40" fill="#FFB6C1"/>
-                        <circle cx="140" cy="80" r="15" fill="#4169E1"/>
-                        <circle cx="380" cy="80" r="15" fill="#FF69B4"/>
-                        <circle cx="140" cy="240" r="15" fill="#32CD32"/>
-                        <circle cx="380" cy="240" r="15" fill="#FFD700"/>
-                        <line x1="260" y1="150" x2="140" y2="80" stroke="#FF0000" stroke-width="2" stroke-dasharray="5,5"/>
-                        <line x1="260" y1="150" x2="380" y2="80" stroke="#FF0000" stroke-width="2" stroke-dasharray="5,5"/>
-                        <line x1="260" y1="150" x2="140" y2="240" stroke="#FF0000" stroke-width="2" stroke-dasharray="5,5"/>
-                        <line x1="260" y1="150" x2="380" y2="240" stroke="#FF0000" stroke-width="2" stroke-dasharray="5,5"/>
-                        <text x="260" y="280" font-size="18" text-anchor="middle" fill="#333">Moving diagonally in all directions</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="be-snowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.95" />
+        <stop offset="100%" style="stop-color:#E0F4FF;stop-opacity:0.9" />
+      </linearGradient>
+      <linearGradient id="be-skyWarm" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#FF8C42;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#FFE4B5;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="be-mountainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#F0FFFF;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#E0F4FF;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#B0E0E6;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <!-- Sunset sky -->
+    <rect width="520" height="300" fill="url(#be-skyWarm)"/>
+    <!-- Sun -->
+    <circle cx="460" cy="80" r="40" fill="#FFD700" opacity="0.9"/>
+    <!-- Mountains -->
+    <polygon points="0,180 150,80 280,200 520,120 520,300 0,300" fill="url(#be-mountainGrad)"/>
+    <polygon points="100,180 220,60 340,190 520,140 520,300 0,300" fill="#D4E6F1" opacity="0.7"/>
+    <!-- Snow patches -->
+    <ellipse cx="150" cy="90" rx="25" ry="15" fill="#FFFFFF" opacity="0.9"/>
+    <ellipse cx="320" cy="160" rx="35" ry="20" fill="#FFFFFF" opacity="0.85"/>
+    <!-- Pine trees -->
+    <polygon points="80,180 75,195 85,195" fill="#2D5016"/>
+    <polygon points="80,185 72,200 88,200" fill="#2D5016"/>
+    <polygon points="420,150 410,170 430,170" fill="#2D5016"/>
+    <polygon points="420,155 405,180 435,180" fill="#2D5016"/>
+    <!-- Diagonal ski tracks -->
+    <line x1="380" y1="50" x2="240" y2="190" stroke="#4169E1" stroke-width="6" opacity="0.6" stroke-linecap="round"/>
+    <line x1="390" y1="45" x2="250" y2="185" stroke="#6495ED" stroke-width="4" opacity="0.5" stroke-linecap="round"/>
+    <line x1="370" y1="55" x2="230" y2="195" stroke="#6495ED" stroke-width="4" opacity="0.5" stroke-linecap="round"/>
+    <!-- Another diagonal direction -->
+    <line x1="250" y1="100" x2="130" y2="200" stroke="#4169E1" stroke-width="5" opacity="0.5" stroke-linecap="round"/>
+    <!-- Bishop character (skier) -->
+    <!-- Head -->
+    <circle cx="235" cy="195" r="10" fill="#FDBCB4"/>
+    <!-- Bishop's mitre (pointed hat) -->
+    <polygon points="225,180 245,180 235,160" fill="#9932CC" opacity="0.9"/>
+    <polygon points="235,160 245,180 250,175" fill="#BA55D3" opacity="0.8"/>
+    <!-- Body/Winter coat -->
+    <rect x="225" y="205" width="20" height="25" rx="3" fill="#4169E1"/>
+    <!-- Arms holding ski poles -->
+    <line x1="225" y1="210" x2="200" y2="205" stroke="#FDBCB4" stroke-width="3"/>
+    <line x1="245" y1="210" x2="270" y2="205" stroke="#FDBCB4" stroke-width="3"/>
+    <!-- Ski poles -->
+    <line x1="200" y1="205" x2="195" y2="235" stroke="#FFD700" stroke-width="2"/>
+    <line x1="270" y1="205" x2="275" y2="235" stroke="#FFD700" stroke-width="2"/>
+    <!-- Legs/skis -->
+    <ellipse cx="228" cy="232" rx="4" ry="8" fill="#FFFFFF" stroke="#000080" stroke-width="1"/>
+    <ellipse cx="242" cy="232" rx="4" ry="8" fill="#FFFFFF" stroke="#000080" stroke-width="1"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="0.5">Diagonal Only</text>
+  </svg>`
                 },
                 {
                     piece: 'queen',
-                    title: 'A student leader (the Queen)',
+                    title: 'The Powerful Queen',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#FFE4E1"/>
-                        <circle cx="260" cy="120" r="20" fill="#FFB6C1"/>
-                        <polygon points="260,80 275,105 290,100 280,115 295,130 270,125 260,145 250,125 225,130 240,115 230,100 245,105" fill="#FFD700"/>
-                        <rect x="250" y="140" width="20" height="40" fill="#FFB6C1"/>
-                        <line x1="260" y1="100" x2="260" y2="50" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="380" y2="50" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="140" y2="50" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="380" y2="220" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="140" y2="220" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="100" y2="100" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="420" y2="100" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="100" x2="260" y2="250" stroke="#FF0000" stroke-width="2"/>
-                        <text x="260" y="280" font-size="18" text-anchor="middle" fill="#333">Most powerful! Moves like Rook + Bishop</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="qe-queenBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1a1a4d;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#2d0d5e;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="qe-queenDress" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#9932CC;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#6A0DAD;stop-opacity:1" />
+      </linearGradient>
+      <radialGradient id="qe-crownGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#FFA500;stop-opacity:0" />
+      </radialGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="520" height="300" fill="url(#qe-queenBg)"/>
+    <!-- Sparkles/stars background -->
+    <circle cx="80" cy="60" r="2" fill="#FFD700" opacity="0.8"/>
+    <circle cx="150" cy="40" r="1.5" fill="#FFD700" opacity="0.7"/>
+    <circle cx="420" cy="80" r="2" fill="#FFD700" opacity="0.8"/>
+    <circle cx="450" cy="50" r="1" fill="#FFD700" opacity="0.6"/>
+    <circle cx="200" cy="140" r="1.5" fill="#FFD700" opacity="0.5"/>
+    <circle cx="380" cy="180" r="1" fill="#FFD700" opacity="0.7"/>
+    <!-- Magical light beams (8 directions) -->
+    <!-- Up -->
+    <polygon points="260,120 250,0 270,0" fill="#FFD700" opacity="0.3"/>
+    <!-- Up-right -->
+    <polygon points="310,110 450,-30 465,-15" fill="#FFD700" opacity="0.25"/>
+    <!-- Right -->
+    <polygon points="340,150 520,130 520,170" fill="#FFD700" opacity="0.3"/>
+    <!-- Down-right -->
+    <polygon points="310,190 450,350 435,335" fill="#FFD700" opacity="0.25"/>
+    <!-- Down -->
+    <polygon points="260,180 250,300 270,300" fill="#FFD700" opacity="0.3"/>
+    <!-- Down-left -->
+    <polygon points="210,190 70,350 85,335" fill="#FFD700" opacity="0.25"/>
+    <!-- Left -->
+    <polygon points="180,150 0,130 0,170" fill="#FFD700" opacity="0.3"/>
+    <!-- Up-left -->
+    <polygon points="210,110 70,-30 85,-15" fill="#FFD700" opacity="0.25"/>
+    <!-- Hill/pedestal -->
+    <ellipse cx="260" cy="200" rx="80" ry="35" fill="#4A4A6A" opacity="0.7"/>
+    <ellipse cx="260" cy="195" rx="75" ry="30" fill="#6A6A8A" opacity="0.6"/>
+    <!-- Queen character -->
+    <!-- Body/Dress -->
+    <polygon points="240,130 280,130 285,180 235,180" fill="url(#qe-queenDress)"/>
+    <!-- Arms -->
+    <line x1="240" y1="145" x2="215" y2="140" stroke="#FDBCB4" stroke-width="5" stroke-linecap="round"/>
+    <line x1="280" y1="145" x2="305" y2="140" stroke="#FDBCB4" stroke-width="5" stroke-linecap="round"/>
+    <!-- Hands -->
+    <circle cx="215" cy="140" r="4" fill="#FDBCB4"/>
+    <circle cx="305" cy="140" r="4" fill="#FDBCB4"/>
+    <!-- Neck -->
+    <rect x="255" y="120" width="10" height="10" fill="#FDBCB4"/>
+    <!-- Head -->
+    <circle cx="260" cy="115" r="12" fill="#FDBCB4"/>
+    <!-- Eyes -->
+    <circle cx="255" cy="112" r="1.5" fill="#000"/>
+    <circle cx="265" cy="112" r="1.5" fill="#000"/>
+    <!-- Crown with glow -->
+    <circle cx="260" cy="85" r="35" fill="url(#qe-crownGlow)"/>
+    <!-- Crown peaks -->
+    <polygon points="245,95 240,70 250,90" fill="#FFD700"/>
+    <polygon points="260,92 255,60 265,92" fill="#FFD700"/>
+    <polygon points="275,95 280,70 270,90" fill="#FFD700"/>
+    <!-- Crown band -->
+    <ellipse cx="260" cy="102" rx="20" ry="8" fill="#FFD700" stroke="#FFA500" stroke-width="1"/>
+    <!-- Jewels on crown -->
+    <circle cx="250" cy="100" r="2" fill="#FF1493"/>
+    <circle cx="260" cy="96" r="2" fill="#00BFFF"/>
+    <circle cx="270" cy="100" r="2" fill="#FF1493"/>
+    <!-- Magical aura -->
+    <circle cx="260" cy="150" r="45" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.5" stroke-dasharray="5,5"/>
+    <!-- Additional sparkles around queen -->
+    <circle cx="290" cy="130" r="1.5" fill="#FFD700" opacity="0.9"/>
+    <circle cx="230" cy="140" r="1.5" fill="#FFD700" opacity="0.9"/>
+    <circle cx="260" cy="100" r="1" fill="#FF1493" opacity="0.8"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFD700" stroke="#000" stroke-width="0.5">All Directions, Powerful</text>
+  </svg>`
                 },
                 {
                     piece: 'king',
-                    title: 'A parent protecting their child',
+                    title: 'The Careful King',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#ADD8E6"/>
-                        <circle cx="260" cy="100" r="25" fill="#FFD700"/>
-                        <polygon points="260,65 270,75 280,70 275,85 290,95 270,90 260,105 250,90 230,95 245,85 240,70 250,75" fill="#FFD700"/>
-                        <rect x="245" y="125" width="30" height="50" fill="#8B4513"/>
-                        <rect x="200" y="175" width="15" height="60" fill="#FFB6C1"/>
-                        <rect x="305" y="175" width="15" height="60" fill="#FFB6C1"/>
-                        <circle cx="180" cy="160" r="15" fill="#FFB6C1"/>
-                        <circle cx="340" cy="160" r="15" fill="#FFB6C1"/>
-                        <line x1="260" y1="125" x2="200" y2="160" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="125" x2="320" y2="160" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="125" x2="260" y2="180" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="125" x2="220" y2="145" stroke="#FF0000" stroke-width="2"/>
-                        <line x1="260" y1="125" x2="300" y2="145" stroke="#FF0000" stroke-width="2"/>
-                        <circle cx="260" cy="150" r="30" fill="none" stroke="#FF0000" stroke-width="1" stroke-dasharray="5,5"/>
-                        <text x="260" y="280" font-size="18" text-anchor="middle" fill="#333">Moves one square in any direction</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="ke-kingBg" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="ke-kingThrone" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <!-- Background sky -->
+    <rect width="520" height="300" fill="url(#ke-kingBg)"/>
+    <!-- Garden background -->
+    <!-- Grass -->
+    <rect x="0" y="160" width="520" height="140" fill="#6BA834"/>
+    <!-- Flowers in garden -->
+    <circle cx="100" cy="240" r="4" fill="#FF69B4"/>
+    <circle cx="95" cy="235" r="2" fill="#FFB6C1"/>
+    <circle cx="105" cy="235" r="2" fill="#FFB6C1"/>
+    <circle cx="420" cy="250" r="4" fill="#FF1493"/>
+    <circle cx="415" cy="245" r="2" fill="#FFB6C1"/>
+    <circle cx="425" cy="245" r="2" fill="#FFB6C1"/>
+    <circle cx="200" cy="260" r="3" fill="#00BFFF"/>
+    <circle cx="195" cy="255" r="1.5" fill="#87CEEB"/>
+    <circle cx="205" cy="255" r="1.5" fill="#87CEEB"/>
+    <!-- Butterflies -->
+    <ellipse cx="150" cy="120" rx="4" ry="6" fill="#FF69B4" opacity="0.8"/>
+    <ellipse cx="160" cy="120" rx="4" ry="6" fill="#FF69B4" opacity="0.8"/>
+    <!-- Garden fence circle around king -->
+    <circle cx="260" cy="180" r="50" fill="none" stroke="#8B6F47" stroke-width="2" stroke-dasharray="3,3"/>
+    <!-- Glowing circle showing limited reach -->
+    <circle cx="260" cy="180" r="55" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.4"/>
+    <!-- Protective dome/shield above -->
+    <ellipse cx="260" cy="140" rx="60" ry="45" fill="#87CEEB" opacity="0.2" stroke="#FFD700" stroke-width="2"/>
+    <!-- Directional arrows (one step each direction) -->
+    <!-- Up arrow -->
+    <line x1="260" y1="180" x2="260" y2="145" stroke="#FFD700" stroke-width="2"/>
+    <polygon points="260,140 255,150 265,150" fill="#FFD700"/>
+    <!-- Down arrow -->
+    <line x1="260" y1="180" x2="260" y2="215" stroke="#FFD700" stroke-width="2"/>
+    <polygon points="260,220 255,210 265,210" fill="#FFD700"/>
+    <!-- Left arrow -->
+    <line x1="260" y1="180" x2="225" y2="180" stroke="#FFD700" stroke-width="2"/>
+    <polygon points="220,180 230,175 230,185" fill="#FFD700"/>
+    <!-- Right arrow -->
+    <line x1="260" y1="180" x2="295" y2="180" stroke="#FFD700" stroke-width="2"/>
+    <polygon points="300,180 290,175 290,185" fill="#FFD700"/>
+    <!-- Diagonal arrows (subtle) -->
+    <line x1="260" y1="180" x2="285" y2="155" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="289,151 281,161 285,153" fill="#FFD700" opacity="0.7"/>
+    <line x1="260" y1="180" x2="235" y2="155" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="231,151 239,161 235,153" fill="#FFD700" opacity="0.7"/>
+    <line x1="260" y1="180" x2="285" y2="205" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="289,209 281,199 285,207" fill="#FFD700" opacity="0.7"/>
+    <line x1="260" y1="180" x2="235" y2="205" stroke="#FFD700" stroke-width="1.5" opacity="0.7"/>
+    <polygon points="231,209 239,199 235,207" fill="#FFD700" opacity="0.7"/>
+    <!-- King character -->
+    <!-- Body/Robe -->
+    <polygon points="245,190 275,190 280,220 240,220" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <!-- Fur trim on robe -->
+    <path d="M 240 220 Q 245 225 280 225 Q 275 220 280 220" fill="#FFFFFF" opacity="0.8"/>
+    <!-- Arms -->
+    <line x1="245" y1="200" x2="220" y2="200" stroke="#FDBCB4" stroke-width="4" stroke-linecap="round"/>
+    <line x1="275" y1="200" x2="300" y2="200" stroke="#FDBCB4" stroke-width="4" stroke-linecap="round"/>
+    <!-- Hands -->
+    <circle cx="220" cy="200" r="3" fill="#FDBCB4"/>
+    <circle cx="300" cy="200" r="3" fill="#FDBCB4"/>
+    <!-- Neck -->
+    <rect x="256" y="185" width="8" height="8" fill="#FDBCB4"/>
+    <!-- Head -->
+    <circle cx="260" cy="180" r="10" fill="#FDBCB4"/>
+    <!-- Face details -->
+    <circle cx="256" cy="178" r="1" fill="#000"/>
+    <circle cx="264" cy="178" r="1" fill="#000"/>
+    <path d="M 258 183 Q 260 185 262 183" stroke="#FF69B4" stroke-width="1" fill="none"/>
+    <!-- Crown -->
+    <ellipse cx="260" cy="165" rx="16" ry="10" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <!-- Crown cross on top -->
+    <line x1="260" y1="150" x2="260" y2="165" stroke="#FFD700" stroke-width="2"/>
+    <line x1="250" y1="158" x2="270" y2="158" stroke="#FFD700" stroke-width="2"/>
+    <!-- Crown jewels -->
+    <circle cx="252" cy="168" r="2" fill="#FF1493"/>
+    <circle cx="260" cy="166" r="2" fill="#00BFFF"/>
+    <circle cx="268" cy="168" r="2" fill="#FF1493"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="0.5">One Step Careful</text>
+  </svg>`
                 }
             ],
             hard: [
                 {
                     piece: 'pawn',
-                    title: 'A tiny person taking careful steps',
+                    title: 'The Stepping Stone Path',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#4B0082"/>
-                        <circle cx="260" cy="80" r="12" fill="#FFB6C1"/>
-                        <rect x="255" y="92" width="10" height="25" fill="#FFB6C1"/>
-                        <rect x="250" y="117" width="5" height="20" fill="#FFB6C1"/>
-                        <rect x="265" y="117" width="5" height="20" fill="#FFB6C1"/>
-                        <line x1="260" y1="92" x2="245" y2="110" stroke="#FFB6C1" stroke-width="4"/>
-                        <line x1="260" y1="92" x2="275" y2="110" stroke="#FFB6C1" stroke-width="4"/>
-                        <rect x="50" y="200" width="420" height="15" fill="#8B7355" rx="7"/>
-                        <circle cx="100" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="150" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="200" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="250" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="300" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="350" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="400" cy="207" r="3" fill="#FFD700"/>
-                        <circle cx="450" cy="207" r="3" fill="#FFD700"/>
-                        <text x="260" y="260" font-size="16" text-anchor="middle" fill="#FFF">Can you see it moving forward slowly?</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="ph-portalBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#0A0E27;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#1B2845;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#2d0d5e;stop-opacity:1" />
+      </linearGradient>
+      <radialGradient id="ph-portalGlow" cx="80%" cy="50%" r="50%">
+        <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:0.8" />
+        <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:0" />
+      </radialGradient>
+      <linearGradient id="ph-stonePath" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#00BFFF;stop-opacity:0.8" />
+      </linearGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="520" height="300" fill="url(#ph-portalBg)"/>
+    <!-- Dark forest -->
+    <ellipse cx="80" cy="200" rx="60" ry="80" fill="#0F1B3C" opacity="0.8"/>
+    <ellipse cx="450" cy="220" rx="70" ry="90" fill="#0F1B3C" opacity="0.7"/>
+    <!-- Misty atmosphere -->
+    <ellipse cx="260" cy="200" rx="150" ry="80" fill="#1B2845" opacity="0.5"/>
+    <!-- Portal/doorway in distance -->
+    <circle cx="450" cy="150" r="40" fill="url(#ph-portalGlow)"/>
+    <circle cx="450" cy="150" r="35" fill="none" stroke="#00FFFF" stroke-width="2" opacity="0.7"/>
+    <ellipse cx="450" cy="150" rx="30" ry="35" fill="#1B2845" opacity="0.8"/>
+    <!-- Stepping stones path -->
+    <!-- First pair (closer - representing optional 2-square first move) -->
+    <ellipse cx="100" cy="160" rx="16" ry="14" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="2"/>
+    <text x="100" y="165" font-family="Arial" font-size="10" text-anchor="middle" fill="#000" opacity="0.7">1</text>
+    <ellipse cx="130" cy="160" rx="16" ry="14" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="2" opacity="0.8"/>
+    <text x="130" y="165" font-family="Arial" font-size="10" text-anchor="middle" fill="#000" opacity="0.6">2</text>
+    <!-- Regular spacing (one at a time from here) -->
+    <ellipse cx="170" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="210" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.65"/>
+    <ellipse cx="250" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.6"/>
+    <ellipse cx="290" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.55"/>
+    <ellipse cx="330" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.5"/>
+    <ellipse cx="370" cy="160" rx="15" ry="13" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1.5" opacity="0.45"/>
+    <!-- More stones towards portal -->
+    <ellipse cx="405" cy="155" rx="14" ry="12" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1" opacity="0.4"/>
+    <ellipse cx="435" cy="150" rx="13" ry="11" fill="url(#ph-stonePath)" stroke="#4169E1" stroke-width="1" opacity="0.35"/>
+    <!-- Glow on stones -->
+    <ellipse cx="100" cy="160" rx="18" ry="16" fill="none" stroke="#00FFFF" stroke-width="1" opacity="0.5"/>
+    <ellipse cx="130" cy="160" rx="18" ry="16" fill="none" stroke="#00FFFF" stroke-width="1" opacity="0.4"/>
+    <!-- Magical mist particles -->
+    <circle cx="180" cy="120" r="3" fill="#87CEEB" opacity="0.4"/>
+    <circle cx="250" cy="130" r="2" fill="#87CEEB" opacity="0.3"/>
+    <circle cx="320" cy="115" r="2.5" fill="#87CEEB" opacity="0.35"/>
+    <circle cx="380" cy="125" r="2" fill="#87CEEB" opacity="0.3"/>
+    <!-- Pawn character at start -->
+    <!-- Helmet -->
+    <circle cx="100" cy="120" r="9" fill="#C0C0C0"/>
+    <!-- Head -->
+    <circle cx="100" cy="132" r="7" fill="#FDBCB4"/>
+    <!-- Body -->
+    <rect x="94" y="140" width="12" height="14" fill="#FF6B6B" rx="2"/>
+    <!-- Shield -->
+    <circle cx="85" cy="145" r="6" fill="#4169E1"/>
+    <circle cx="85" cy="145" r="4" fill="#6495ED" opacity="0.7"/>
+    <!-- Legs -->
+    <line x1="97" y1="154" x2="97" y2="165" stroke="#8B6F47" stroke-width="2.5"/>
+    <line x1="103" y1="154" x2="103" y2="165" stroke="#8B6F47" stroke-width="2.5"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#00FFFF" stroke="#000" stroke-width="0.5">Two Steps Forward, Then One</text>
+  </svg>`
                 },
                 {
                     piece: 'rook',
-                    title: 'A robot moving in a maze',
+                    title: 'The Lighthouse',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#696969"/>
-                        <rect x="80" y="50" width="360" height="200" fill="#000" stroke="#666" stroke-width="3"/>
-                        <rect x="100" y="70" width="320" height="30" fill="#555"/>
-                        <rect x="100" y="130" width="320" height="30" fill="#555"/>
-                        <rect x="100" y="190" width="320" height="30" fill="#555"/>
-                        <rect x="100" y="70" width="30" height="150" fill="#555"/>
-                        <rect x="390" y="70" width="30" height="150" fill="#555"/>
-                        <rect x="240" y="50" width="40" height="200" fill="none" stroke="#FF6B6B" stroke-width="3" stroke-dasharray="5,5"/>
-                        <circle cx="260" cy="140" r="12" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
-                        <text x="260" y="285" font-size="16" text-anchor="middle" fill="#FFF">Straight lines only, not around corners</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="rh-oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#0A2F51;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1B4D6D;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="rh-lighthouseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#D94A1A;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="rh-beamGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFFF99;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#FFFF99;stop-opacity:0.5" />
+        <stop offset="100%" style="stop-color:#FFFF99;stop-opacity:0" />
+      </linearGradient>
+    </defs>
+    <!-- Ocean background -->
+    <rect width="520" height="300" fill="url(#rh-oceanGrad)"/>
+    <!-- Fog layers -->
+    <ellipse cx="260" cy="200" rx="350" ry="100" fill="#1B4D6D" opacity="0.4"/>
+    <!-- Waves -->
+    <path d="M 0 240 Q 65 220 130 240 T 260 240 T 390 240 T 520 240 L 520 300 L 0 300 Z" fill="#0F1F2F" opacity="0.6"/>
+    <path d="M 0 260 Q 130 240 260 260 T 520 260 L 520 300 L 0 300 Z" fill="#0A1820" opacity="0.5"/>
+    <!-- Rocky cliff -->
+    <polygon points="50,200 200,180 220,300 0,300" fill="#4A4A4A" opacity="0.9"/>
+    <!-- Lighthouse structure -->
+    <!-- Base -->
+    <rect x="150" y="200" width="120" height="100" fill="url(#rh-lighthouseGrad)"/>
+    <!-- Cylindrical tower -->
+    <ellipse cx="210" cy="200" rx="60" ry="15" fill="#D94A1A" opacity="0.9"/>
+    <!-- Tower body -->
+    <rect x="155" y="140" width="110" height="80" fill="url(#rh-lighthouseGrad)" stroke="#8B3D1A" stroke-width="1"/>
+    <!-- Tower top (lantern room) -->
+    <rect x="160" y="130" width="100" height="15" fill="#FF6B35" opacity="0.9"/>
+    <ellipse cx="210" cy="130" rx="50" ry="8" fill="#FFD700" opacity="0.8"/>
+    <!-- Light beams (straight lines in 4 directions) -->
+    <!-- Horizontal beam right -->
+    <polygon points="260,145 520,130 520,160" fill="url(#rh-beamGrad)" opacity="0.7"/>
+    <!-- Horizontal beam left -->
+    <polygon points="160,145 -80,130 -80,160" fill="url(#rh-beamGrad)" opacity="0.7"/>
+    <!-- Vertical beam down -->
+    <polygon points="210,215 200,300 220,300" fill="url(#rh-beamGrad)" opacity="0.6"/>
+    <!-- Vertical beam up -->
+    <polygon points="210,130 200,-20 220,-20" fill="url(#rh-beamGrad)" opacity="0.6"/>
+    <!-- Ship in distance (right beam) -->
+    <!-- Ship hull -->
+    <ellipse cx="420" cy="160" rx="30" ry="12" fill="#8B4513"/>
+    <!-- Mast -->
+    <line x1="420" y1="145" x2="420" y2="100" stroke="#D2B48C" stroke-width="2"/>
+    <!-- Sail -->
+    <path d="M 420 115 L 450 120 L 445 150 Z" fill="#FFF" opacity="0.8"/>
+    <!-- Ship hull details -->
+    <path d="M 390 160 Q 420 165 450 160" stroke="#6B3410" stroke-width="1" fill="none"/>
+    <!-- Another ship in distance (left beam) -->
+    <ellipse cx="80" cy="155" rx="25" ry="10" fill="#8B4513"/>
+    <line x1="80" y1="145" x2="80" y2="110" stroke="#D2B48C" stroke-width="1.5"/>
+    <path d="M 80 120 L 105 125 L 100 150 Z" fill="#FFF" opacity="0.7"/>
+    <!-- Lighthouse keeper at top -->
+    <circle cx="210" cy="125" r="4" fill="#FDBCB4"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFF99" stroke="#000" stroke-width="0.5">Straight Paths All Around</text>
+  </svg>`
                 },
                 {
                     piece: 'knight',
-                    title: 'A bouncy ball with tricky movement',
+                    title: 'The Rocket with an L-Turn',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#87CEEB"/>
-                        <circle cx="260" cy="100" r="25" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
-                        <circle cx="140" cy="160" r="8" fill="#FF0000" opacity="0.3"/>
-                        <circle cx="380" cy="140" r="8" fill="#FF0000" opacity="0.3"/>
-                        <circle cx="200" cy="240" r="8" fill="#FF0000" opacity="0.3"/>
-                        <circle cx="320" cy="250" r="8" fill="#FF0000" opacity="0.3"/>
-                        <path d="M 260 100 Q 190 140 140 160" stroke="#FF0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <path d="M 260 100 Q 330 120 380 140" stroke="#FF0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <path d="M 260 100 Q 210 180 200 240" stroke="#FF0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <path d="M 260 100 Q 310 190 320 250" stroke="#FF0000" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                        <text x="260" y="285" font-size="16" text-anchor="middle" fill="#333">Can jump over other pieces!</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="nh-spaceBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#0A0A1A;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1A0A2E;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="nh-rocketRed" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FF4444;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#AA1111;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="nh-exhaustTrail" x1="0%" y1="50%" x2="100%" y2="50%">
+        <stop offset="0%" style="stop-color:#FF8C42;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#FFB84D;stop-opacity:0.5" />
+        <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0" />
+      </linearGradient>
+    </defs>
+    <!-- Space background -->
+    <rect width="520" height="300" fill="url(#nh-spaceBg)"/>
+    <!-- Stars scattered -->
+    <circle cx="50" cy="50" r="1.5" fill="#FFF"/>
+    <circle cx="150" cy="30" r="1" fill="#FFF"/>
+    <circle cx="200" cy="70" r="1.5" fill="#FFF"/>
+    <circle cx="350" cy="40" r="1" fill="#FFF"/>
+    <circle cx="480" cy="80" r="1.5" fill="#FFF"/>
+    <circle cx="100" cy="150" r="1" fill="#FFF"/>
+    <circle cx="450" cy="160" r="1" fill="#FFF"/>
+    <circle cx="80" cy="250" r="1.5" fill="#FFF"/>
+    <circle cx="420" cy="270" r="1" fill="#FFF"/>
+    <!-- Nebula effect -->
+    <ellipse cx="150" cy="100" rx="80" ry="60" fill="#9932CC" opacity="0.2"/>
+    <ellipse cx="400" cy="200" rx="100" ry="70" fill="#4169E1" opacity="0.15"/>
+    <!-- Planets -->
+    <!-- Planet 1 (jumped over - left) -->
+    <circle cx="150" cy="180" r="35" fill="#FF8C42" opacity="0.9"/>
+    <ellipse cx="150" cy="180" rx="35" ry="12" fill="#FFB84D" opacity="0.6"/>
+    <!-- Planet 2 (jumped over - top) -->
+    <circle cx="350" cy="120" r="28" fill="#6495ED" opacity="0.9"/>
+    <circle cx="360" cy="115" r="10" fill="#87CEEB" opacity="0.7"/>
+    <!-- Asteroids (obstacles jumped) -->
+    <circle cx="200" cy="150" r="12" fill="#8B7355" opacity="0.8"/>
+    <circle cx="300" cy="160" r="10" fill="#8B7355" opacity="0.7"/>
+    <!-- L-shaped exhaust trail -->
+    <!-- Vertical part of L -->
+    <path d="M 250 240 L 250 80" stroke="url(#nh-exhaustTrail)" stroke-width="20" fill="none" opacity="0.8" stroke-linecap="round"/>
+    <!-- Horizontal part of L -->
+    <path d="M 250 80 L 420 80" stroke="url(#nh-exhaustTrail)" stroke-width="20" fill="none" opacity="0.8" stroke-linecap="round"/>
+    <!-- Glow effect on trail -->
+    <path d="M 250 240 L 250 80" stroke="#FFD700" stroke-width="8" fill="none" opacity="0.3" stroke-linecap="round"/>
+    <path d="M 250 80 L 420 80" stroke="#FFD700" stroke-width="8" fill="none" opacity="0.3" stroke-linecap="round"/>
+    <!-- Rocket at corner of L -->
+    <!-- Rocket body -->
+    <rect x="415" y="65" width="20" height="35" rx="3" fill="url(#nh-rocketRed)" stroke="#AA1111" stroke-width="1"/>
+    <!-- Rocket nose -->
+    <polygon points="425,60 420,65 430,65" fill="#FFD700"/>
+    <!-- Window -->
+    <circle cx="425" cy="75" r="3" fill="#87CEEB" opacity="0.9"/>
+    <!-- Fins -->
+    <polygon points="415,95 410,105 418,100" fill="#4169E1" opacity="0.9"/>
+    <polygon points="435,95 440,105 432,100" fill="#4169E1" opacity="0.9"/>
+    <!-- Flame/exhaust -->
+    <polygon points="420,100 425,100 423,115 422,115" fill="#FFD700" opacity="0.8"/>
+    <polygon points="430,100 435,100 433,115 432,115" fill="#FF8C42" opacity="0.8"/>
+    <!-- Rocket trail glow -->
+    <ellipse cx="425" cy="110" rx="15" ry="8" fill="#FF8C42" opacity="0.3"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFD700" stroke="#000" stroke-width="0.5">L-Shaped Jump, Over Obstacles</text>
+  </svg>`
                 },
                 {
                     piece: 'bishop',
-                    title: 'A diagonal dancer on a stage',
+                    title: 'The Mountain Zigzag',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#4B0082"/>
-                        <circle cx="100" cy="100" r="8" fill="#FFD700"/>
-                        <circle cx="420" cy="100" r="8" fill="#FFD700"/>
-                        <circle cx="100" cy="220" r="8" fill="#FFD700"/>
-                        <circle cx="420" cy="220" r="8" fill="#FFD700"/>
-                        <line x1="100" y1="100" x2="420" y2="220" stroke="#FFD700" stroke-width="2" stroke-dasharray="5,5"/>
-                        <line x1="420" y1="100" x2="100" y2="220" stroke="#FFD700" stroke-width="2" stroke-dasharray="5,5"/>
-                        <circle cx="260" cy="160" r="18" fill="#FF1493" stroke="#FFD700" stroke-width="2"/>
-                        <text x="260" y="285" font-size="16" text-anchor="middle" fill="#FFF">Always moves corner to corner</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="bh-auroraGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#00FF7F;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#00CED1;stop-opacity:0.6" />
+        <stop offset="100%" style="stop-color:#1B2845;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="bh-mountainSnow" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#E0F4FF;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="bh-trailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#FFB84D;stop-opacity:0.7" />
+      </linearGradient>
+    </defs>
+    <!-- Sky with aurora -->
+    <defs>
+      <linearGradient id="bh-nightSkyAur" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#0A0E27;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#1B2845;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#2d0d5e;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <rect width="520" height="300" fill="url(#bh-nightSkyAur)"/>
+    <!-- Aurora borealis -->
+    <ellipse cx="260" cy="50" rx="200" ry="80" fill="#00FF7F" opacity="0.2"/>
+    <path d="M 0 60 Q 260 30 520 50" stroke="#00FF7F" stroke-width="8" fill="none" opacity="0.3" filter="blur(2px)"/>
+    <path d="M 0 80 Q 260 40 520 70" stroke="#00CED1" stroke-width="6" fill="none" opacity="0.25" filter="blur(2px)"/>
+    <!-- Mountain range -->
+    <polygon points="0,180 100,80 180,150 280,60 380,140 460,70 520,160 520,300 0,300" fill="url(#bh-mountainSnow)"/>
+    <!-- Mountain ridges and shading -->
+    <polygon points="100,80 180,150 140,180 0,180" fill="#D4E6F1" opacity="0.6"/>
+    <polygon points="280,60 380,140 330,180 180,150" fill="#B0C4DE" opacity="0.5"/>
+    <polygon points="460,70 520,160 480,190 380,140" fill="#C5D9E8" opacity="0.6"/>
+    <!-- Diagonal trail 1 (up-left to down-right) -->
+    <line x1="420" y1="120" x2="280" y2="200" stroke="url(#bh-trailGrad)" stroke-width="12" opacity="0.8" stroke-linecap="round"/>
+    <!-- Diagonal trail 2 (slightly different angle) -->
+    <line x1="300" y1="140" x2="150" y2="220" stroke="url(#bh-trailGrad)" stroke-width="10" opacity="0.7" stroke-linecap="round"/>
+    <!-- Trail glow -->
+    <line x1="420" y1="120" x2="280" y2="200" stroke="#FFD700" stroke-width="5" opacity="0.4" stroke-linecap="round"/>
+    <!-- Flags at peaks -->
+    <!-- Flag 1 -->
+    <line x1="280" y1="60" x2="280" y2="45" stroke="#8B4513" stroke-width="2"/>
+    <polygon points="280,48 295,52 280,58" fill="#FF4444"/>
+    <!-- Flag 2 -->
+    <line x1="100" y1="80" x2="100" y2="65" stroke="#8B4513" stroke-width="2"/>
+    <polygon points="100,68 115,72 100,78" fill="#FF4444"/>
+    <!-- Flag 3 -->
+    <line x1="460" y1="70" x2="460" y2="55" stroke="#8B4513" stroke-width="2"/>
+    <polygon points="460,58 475,62 460,68" fill="#FF4444"/>
+    <!-- Adventurer character -->
+    <!-- At a peak looking ahead -->
+    <!-- Head -->
+    <circle cx="280" cy="190" r="6" fill="#FDBCB4"/>
+    <!-- Body -->
+    <rect x="276" y="197" width="8" height="10" fill="#FF6B6B"/>
+    <!-- Legs -->
+    <line x1="278" y1="207" x2="278" y2="215" stroke="#8B6F47" stroke-width="1.5"/>
+    <line x1="282" y1="207" x2="282" y2="215" stroke="#8B6F47" stroke-width="1.5"/>
+    <!-- Backpack -->
+    <rect x="273" y="198" width="6" height="8" fill="#4169E1" opacity="0.8"/>
+    <!-- Stars in sky -->
+    <circle cx="60" cy="40" r="1" fill="#FFF"/>
+    <circle cx="200" cy="30" r="1.5" fill="#FFF"/>
+    <circle cx="420" cy="45" r="1" fill="#FFF"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#00FF7F" stroke="#000" stroke-width="0.5">Diagonal Peaks Only</text>
+  </svg>`
                 },
                 {
                     piece: 'queen',
-                    title: 'A queen with magical power',
+                    title: 'The Compass Rose',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#1a1a2e"/>
-                        <circle cx="260" cy="150" r="80" fill="#FFD700" opacity="0.15"/>
-                        <circle cx="260" cy="100" r="22" fill="#FFD700" stroke="#FFF" stroke-width="2"/>
-                        <polygon points="260,70 272,90 285,85 275,100 290,115 270,110 260,130 250,110 230,115 245,100 235,85 248,90" fill="#FFD700"/>
-                        <rect x="245" y="122" width="30" height="45" fill="#FFD700" stroke="#FFF" stroke-width="1"/>
-                        <line x1="260" y1="100" x2="260" y2="40" stroke="#FFF" stroke-width="2" stroke-dasharray="3,3"/>
-                        <line x1="260" y1="100" x2="360" y2="100" stroke="#FFF" stroke-width="2" stroke-dasharray="3,3"/>
-                        <line x1="260" y1="100" x2="330" y2="170" stroke="#FFF" stroke-width="2" stroke-dasharray="3,3"/>
-                        <line x1="260" y1="100" x2="160" y2="100" stroke="#FFF" stroke-width="2" stroke-dasharray="3,3"/>
-                        <text x="260" y="280" font-size="16" text-anchor="middle" fill="#FFF">All directions at once - super power!</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="qh-compassBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#0F2849;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1B3A56;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="qh-compassGold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="qh-beamRadial" x1="50%" y1="50%" r="50%">
+        <stop offset="0%" style="stop-color:#FFA500;stop-opacity:0.9" />
+        <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0" />
+      </linearGradient>
+    </defs>
+    <!-- Background -->
+    <rect width="520" height="300" fill="url(#qh-compassBg)"/>
+    <!-- Magical map elements in background -->
+    <!-- Castle (far) -->
+    <polygon points="420,200 450,170 480,200 480,240 420,240" fill="#DAA520" opacity="0.5"/>
+    <!-- Forest (far) -->
+    <polygon points="100,180 120,160 140,180 130,200 110,200" fill="#2D5016" opacity="0.6"/>
+    <polygon points="140,185 160,165 180,185 170,205 150,205" fill="#2D5016" opacity="0.5"/>
+    <!-- Ocean waves (far) -->
+    <path d="M 250 240 Q 270 230 290 240" stroke="#4169E1" stroke-width="2" fill="none" opacity="0.5"/>
+    <path d="M 240 255 Q 260 245 280 255" stroke="#4169E1" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <!-- Central compass rose -->
+    <!-- Outer circle -->
+    <circle cx="260" cy="150" r="70" fill="url(#qh-compassGold)" opacity="0.3" stroke="url(#qh-compassGold)" stroke-width="2"/>
+    <!-- 8-point star (compass points) -->
+    <!-- N -->
+    <line x1="260" y1="150" x2="260" y2="50" stroke="url(#qh-compassGold)" stroke-width="3" opacity="0.8"/>
+    <!-- NE -->
+    <line x1="260" y1="150" x2="310" y2="100" stroke="url(#qh-compassGold)" stroke-width="2.5" opacity="0.7"/>
+    <!-- E -->
+    <line x1="260" y1="150" x2="360" y2="150" stroke="url(#qh-compassGold)" stroke-width="3" opacity="0.8"/>
+    <!-- SE -->
+    <line x1="260" y1="150" x2="310" y2="200" stroke="url(#qh-compassGold)" stroke-width="2.5" opacity="0.7"/>
+    <!-- S -->
+    <line x1="260" y1="150" x2="260" y2="250" stroke="url(#qh-compassGold)" stroke-width="3" opacity="0.8"/>
+    <!-- SW -->
+    <line x1="260" y1="150" x2="210" y2="200" stroke="url(#qh-compassGold)" stroke-width="2.5" opacity="0.7"/>
+    <!-- W -->
+    <line x1="260" y1="150" x2="160" y2="150" stroke="url(#qh-compassGold)" stroke-width="3" opacity="0.8"/>
+    <!-- NW -->
+    <line x1="260" y1="150" x2="210" y2="100" stroke="url(#qh-compassGold)" stroke-width="2.5" opacity="0.7"/>
+    <!-- Glowing direction beams -->
+    <!-- North -->
+    <polygon points="260,150 250,50 270,50" fill="url(#qh-beamRadial)" opacity="0.6"/>
+    <!-- East -->
+    <polygon points="260,150 360,140 360,160" fill="url(#qh-beamRadial)" opacity="0.6"/>
+    <!-- South -->
+    <polygon points="260,150 250,250 270,250" fill="url(#qh-beamRadial)" opacity="0.6"/>
+    <!-- West -->
+    <polygon points="260,150 160,140 160,160" fill="url(#qh-beamRadial)" opacity="0.6"/>
+    <!-- Inner compass circle -->
+    <circle cx="260" cy="150" r="35" fill="url(#qh-compassGold)" opacity="0.4" stroke="url(#qh-compassGold)" stroke-width="1.5"/>
+    <!-- Cardinal direction labels -->
+    <text x="260" y="65" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="url(#qh-compassGold)">N</text>
+    <text x="360" y="155" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="url(#qh-compassGold)">E</text>
+    <text x="260" y="245" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="url(#qh-compassGold)">S</text>
+    <text x="160" y="155" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="url(#qh-compassGold)">W</text>
+    <!-- Crown at center -->
+    <ellipse cx="260" cy="140" rx="18" ry="12" fill="url(#qh-compassGold)" stroke="#8B6914" stroke-width="1"/>
+    <!-- Crown peaks -->
+    <polygon points="245,135 240,120 250,130" fill="url(#qh-compassGold)"/>
+    <polygon points="260,132 255,110 265,132" fill="url(#qh-compassGold)"/>
+    <polygon points="275,135 280,120 270,130" fill="url(#qh-compassGold)"/>
+    <!-- Crown jewels -->
+    <circle cx="250" cy="143" r="2" fill="#FF1493"/>
+    <circle cx="260" cy="142" r="2" fill="#00BFFF"/>
+    <circle cx="270" cy="143" r="2" fill="#FF1493"/>
+    <!-- Sparkles -->
+    <circle cx="300" cy="120" r="1" fill="#FFD700" opacity="0.8"/>
+    <circle cx="220" cy="140" r="1" fill="#FFD700" opacity="0.7"/>
+    <circle cx="280" cy="190" r="1" fill="#FFD700" opacity="0.7"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFD700" stroke="#000" stroke-width="0.5">8 Directions, Most Powerful</text>
+  </svg>`
                 },
                 {
                     piece: 'king',
-                    title: 'A throne with limited reach',
+                    title: 'The Protected Throne',
                     svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="520" height="300" fill="#2F4F4F"/>
-                        <rect x="200" y="80" width="120" height="100" fill="#8B4513" stroke="#DAA520" stroke-width="3"/>
-                        <polygon points="260,60 275,80 290,75 280,95 295,110 270,105 260,130 250,105 225,110 240,95 230,75 245,80" fill="#FFD700"/>
-                        <circle cx="200" cy="130" r="12" fill="#FFD700"/>
-                        <circle cx="320" cy="130" r="12" fill="#FFD700"/>
-                        <circle cx="200" cy="160" r="12" fill="#FFD700"/>
-                        <circle cx="320" cy="160" r="12" fill="#FFD700"/>
-                        <circle cx="260" cy="200" r="8" fill="#FFD700"/>
-                        <circle cx="260" cy="130" r="50" fill="none" stroke="#FF0000" stroke-width="2" stroke-dasharray="5,5"/>
-                        <text x="260" y="280" font-size="14" text-anchor="middle" fill="#FFF">Can only move one square - must be safe!</text>
-                    </svg>`
+    <defs>
+      <linearGradient id="kh-throneRoomBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#2d0d5e;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1B0033;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="kh-throneGold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+      </linearGradient>
+      <linearGradient id="kh-shieldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:0.7" />
+        <stop offset="100%" style="stop-color:#4169E1;stop-opacity:0.5" />
+      </linearGradient>
+    </defs>
+    <!-- Throne room background -->
+    <rect width="520" height="300" fill="url(#kh-throneRoomBg)"/>
+    <!-- Stone floor -->
+    <rect x="0" y="220" width="520" height="80" fill="#1a1a4d" opacity="0.8"/>
+    <!-- Floor pattern -->
+    <rect x="100" y="230" width="40" height="40" fill="#2d2d6d" opacity="0.6"/>
+    <rect x="180" y="230" width="40" height="40" fill="#2d2d6d" opacity="0.6"/>
+    <rect x="300" y="230" width="40" height="40" fill="#2d2d6d" opacity="0.6"/>
+    <rect x="380" y="230" width="40" height="40" fill="#2d2d6d" opacity="0.6"/>
+    <!-- Guards in distance (left and right) -->
+    <!-- Guard left -->
+    <circle cx="100" cy="200" r="6" fill="#FDBCB4"/>
+    <rect x="95" y="208" width="10" height="12" fill="#FF6B6B"/>
+    <line x1="95" y1="215" x2="90" y2="225" stroke="#8B6F47" stroke-width="1.5"/>
+    <line x1="105" y1="215" x2="110" y2="225" stroke="#8B6F47" stroke-width="1.5"/>
+    <line x1="100" y1="210" x2="85" y2="200" stroke="#C0C0C0" stroke-width="2"/>
+    <polygon points="85,200 80,195 88,198" fill="#FFD700"/>
+    <!-- Guard right -->
+    <circle cx="420" cy="200" r="6" fill="#FDBCB4"/>
+    <rect x="415" y="208" width="10" height="12" fill="#FF6B6B"/>
+    <line x1="415" y1="215" x2="410" y2="225" stroke="#8B6F47" stroke-width="1.5"/>
+    <line x1="425" y1="215" x2="430" y2="225" stroke="#8B6F47" stroke-width="1.5"/>
+    <line x1="420" y1="210" x2="435" y2="200" stroke="#C0C0C0" stroke-width="2"/>
+    <polygon points="435,200 440,195 432,198" fill="#FFD700"/>
+    <!-- Protective dome/shield -->
+    <ellipse cx="260" cy="150" rx="65" ry="55" fill="url(#kh-shieldGlow)" opacity="0.4" stroke="#4169E1" stroke-width="3"/>
+    <path d="M 195 180 Q 260 110 325 180" fill="none" stroke="#87CEEB" stroke-width="2" opacity="0.6"/>
+    <!-- Platform for throne -->
+    <ellipse cx="260" cy="190" rx="70" ry="25" fill="#8B6F47" opacity="0.8"/>
+    <ellipse cx="260" cy="188" rx="68" ry="23" fill="#A0826D" opacity="0.9"/>
+    <!-- Throne structure -->
+    <!-- Throne back -->
+    <path d="M 240 160 Q 235 140 240 120 L 280 120 Q 285 140 280 160" fill="url(#kh-throneGold)" stroke="#8B6914" stroke-width="2"/>
+    <!-- Throne seat -->
+    <rect x="235" y="160" width="50" height="20" rx="3" fill="url(#kh-throneGold)" stroke="#8B6914" stroke-width="1"/>
+    <!-- Armrests -->
+    <path d="M 235 165 Q 220 170 215 180" fill="url(#kh-throneGold)" stroke="#8B6914" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 285 165 Q 300 170 305 180" fill="url(#kh-throneGold)" stroke="#8B6914" stroke-width="2" stroke-linecap="round"/>
+    <!-- Throne jewels -->
+    <circle cx="245" cy="140" r="2" fill="#FF1493"/>
+    <circle cx="260" cy="125" r="2" fill="#00BFFF"/>
+    <circle cx="275" cy="140" r="2" fill="#FF1493"/>
+    <!-- Crown on throne back -->
+    <ellipse cx="260" cy="115" rx="14" ry="10" fill="url(#kh-throneGold)" stroke="#8B6914" stroke-width="1"/>
+    <polygon points="250,110 245,100 255,108" fill="url(#kh-throneGold)"/>
+    <polygon points="260,105 255,95 265,105" fill="url(#kh-throneGold)"/>
+    <polygon points="270,110 275,100 265,108" fill="url(#kh-throneGold)"/>
+    <!-- King sitting on throne -->
+    <!-- Head -->
+    <circle cx="260" cy="155" r="7" fill="#FDBCB4"/>
+    <!-- Body -->
+    <rect x="256" y="163" width="8" height="10" fill="#9932CC" opacity="0.9"/>
+    <!-- Mini crown on king's head -->
+    <ellipse cx="260" cy="148" rx="10" ry="7" fill="url(#kh-throneGold)" opacity="0.9"/>
+    <!-- One-step arrows (showing limited reach) -->
+    <!-- Up arrow -->
+    <line x1="260" y1="150" x2="260" y2="125" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+    <polygon points="260,120 255,130 265,130" fill="#FFD700" opacity="0.8"/>
+    <!-- Down arrow -->
+    <line x1="260" y1="180" x2="260" y2="205" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+    <polygon points="260,210 255,200 265,200" fill="#FFD700" opacity="0.8"/>
+    <!-- Left arrow -->
+    <line x1="260" y1="170" x2="225" y2="170" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+    <polygon points="220,170 230,165 230,175" fill="#FFD700" opacity="0.8"/>
+    <!-- Right arrow -->
+    <line x1="260" y1="170" x2="295" y2="170" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+    <polygon points="300,170 290,165 290,175" fill="#FFD700" opacity="0.8"/>
+    <!-- Diagonal arrows (subtle) -->
+    <line x1="260" y1="155" x2="280" y2="135" stroke="#FFD700" stroke-width="1.5" opacity="0.6"/>
+    <polygon points="284,131 276,141 280,135" fill="#FFD700" opacity="0.6"/>
+    <line x1="260" y1="155" x2="240" y2="135" stroke="#FFD700" stroke-width="1.5" opacity="0.6"/>
+    <polygon points="236,131 244,141 240,135" fill="#FFD700" opacity="0.6"/>
+    <line x1="260" y1="175" x2="280" y2="195" stroke="#FFD700" stroke-width="1.5" opacity="0.6"/>
+    <polygon points="284,199 276,189 280,195" fill="#FFD700" opacity="0.6"/>
+    <line x1="260" y1="175" x2="240" y2="195" stroke="#FFD700" stroke-width="1.5" opacity="0.6"/>
+    <polygon points="236,199 244,189 240,195" fill="#FFD700" opacity="0.6"/>
+    <!-- Text at bottom -->
+    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFD700" stroke="#000" stroke-width="0.5">One Step Precious & Protected</text>
+  </svg>`
                 }
             ]
         };
