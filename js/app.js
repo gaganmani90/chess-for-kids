@@ -1709,7 +1709,10 @@
             if (introVisible) {
                 headerEl.textContent = '♖ Rook Basics';
                 bodyEl.innerHTML = `
-                    <p>The Rook moves in <strong>straight lines</strong> — up, down, left, or right.</p>
+                    <div class="lesson-elephant-thumb">
+                        <img src="images/rook_elephant.png" alt="Rook and Elephant" />
+                    </div>
+                    <p>Like an elephant, the Rook moves in <strong>straight lines</strong> — up, down, left, or right.</p>
                     <p>It can travel as far as it wants in one direction, but it <strong>can't jump</strong> over other pieces.</p>
                     <p>To capture, the Rook lands on the enemy square.</p>
                 `;
@@ -1732,15 +1735,12 @@
             list.innerHTML = rookChallenges.map((ch, i) => {
                 const isCompleted = lessonState.completed.includes(i);
                 const isActive = lessonState.current === i;
-                // Unlocked if it's 0, or the previous one is completed
-                const isUnlocked = i === 0 || lessonState.completed.includes(i - 1) || lessonState.completed.includes(i);
                 const statusIcon = isCompleted ? '✓' : (i + 1);
                 const starsText = lessonState.starsPerChallenge[i] ? '★'.repeat(lessonState.starsPerChallenge[i]) : '';
 
                 let cls = 'lesson-nav-item';
                 if (isActive) cls += ' active';
                 if (isCompleted) cls += ' completed';
-                if (!isUnlocked && !isCompleted) cls += ' locked';
 
                 return `<li class="${cls}" data-challenge="${i}">
                     <span class="lesson-nav-status">${statusIcon}</span>
@@ -1755,7 +1755,7 @@
             lessonUpdateContentPanel();
 
             // Click handlers for sidebar items
-            list.querySelectorAll('.lesson-nav-item:not(.locked)').forEach(item => {
+            list.querySelectorAll('.lesson-nav-item').forEach(item => {
                 item.addEventListener('click', () => {
                     const idx = parseInt(item.dataset.challenge);
                     if (idx === lessonState.current) return;

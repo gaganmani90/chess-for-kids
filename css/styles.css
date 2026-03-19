@@ -1104,6 +1104,32 @@ h3 {
     font-style: italic;
 }
 
+/* Rook-Elephant image - large for kids */
+.rook-elephant-image {
+    margin: 20px 0;
+}
+
+.rook-elephant-main {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    border-radius: 16px;
+    border: 2px solid rgba(78, 205, 196, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.lesson-elephant-thumb {
+    margin-bottom: 12px;
+}
+
+.lesson-elephant-thumb img {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid rgba(78, 205, 196, 0.3);
+}
+
 .lesson-sidebar-header {
     font-size: 14px;
     font-weight: 700;
@@ -1375,6 +1401,14 @@ button {
 
     .lesson-sidebar-stars {
         display: none;
+    }
+
+    .rook-elephant-main {
+        max-width: 100%;
+    }
+
+    .lesson-elephant-thumb img {
+        max-width: 140px;
     }
 
     .container {
