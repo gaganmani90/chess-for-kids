@@ -233,34 +233,17 @@ h3 {
 }
 
 /* LEARN SECTION */
-.difficulty-toggle {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 30px;
+.learn-puzzle-image {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 16px;
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-.difficulty-btn {
-    padding: 10px 20px;
-    border: 2px solid #2a2a4a;
-    background: transparent;
-    color: #b0b0c0;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    transition: all 0.3s var(--bounce);
-}
-
-.difficulty-btn.active {
-    background: #ffd700;
-    color: #1a1a2e;
-    border-color: #ffd700;
-}
-
-.difficulty-btn:active {
-    transform: scale(0.96);
-}
 
 .quiz-container {
     background: linear-gradient(135deg, #16213e, #1a2a4a);
@@ -1518,15 +1501,6 @@ button {
         padding: 20px 14px;
     }
 
-    .difficulty-toggle {
-        gap: 8px;
-    }
-
-    .difficulty-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-
     .sk-board-svg, .lesson-board-svg {
         padding: 6px;
     }
@@ -1716,15 +1690,6 @@ button {
     }
 
     .board-instructions {
-        font-size: 13px;
-    }
-
-    .difficulty-toggle {
-        margin-bottom: 20px;
-    }
-
-    .difficulty-btn {
-        padding: 8px 14px;
         font-size: 13px;
     }
 }
