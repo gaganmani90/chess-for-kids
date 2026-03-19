@@ -419,7 +419,8 @@
                 {
                     piece: 'bishop',
                     title: 'The Diagonal Explorer',
-                    svg: `<img src="images/bishop_camel.png" alt="Bishop moves like a camel diagonally. Find the silent sentinel of diagonals." class="learn-puzzle-image" />`
+                    svg: `<img src="images/bishop_camel.png" alt="Bishop moves like a camel diagonally. Find the silent sentinel of diagonals." class="learn-puzzle-image" />`,
+                    jokeCard: { src: 'images/bishop_jokes.png', alt: 'Camel-Bishop joke card - Bishop moves diagonally' }
                 },
                 {
                     piece: 'queen',
@@ -696,7 +697,19 @@
                         <button class="puzzle-nav-btn ${i === learnState.currentPuzzle ? 'active' : ''}" data-puzzle="${i}" title="Puzzle ${i + 1}">${i + 1}</button>
                     `).join('')}
                 </div>
-                <h3 style="text-align: center; color: #4ecdc4; margin-bottom: 20px;">${puzzle.title}</h3>
+                <div class="puzzle-title-row">
+                    <h3 style="text-align: center; color: #4ecdc4; margin-bottom: 20px; flex: 1;">${puzzle.title}</h3>
+                    ${puzzle.jokeCard ? `
+                        <button class="learn-info-btn" id="learn-info-btn" title="Bishop joke card" aria-label="Show bishop joke card">ℹ️</button>
+                        <div class="learn-joke-modal" id="learn-joke-modal">
+                            <div class="learn-joke-overlay"></div>
+                            <div class="learn-joke-content">
+                                <button class="learn-joke-close" aria-label="Close">×</button>
+                                <img src="${puzzle.jokeCard.src}" alt="${puzzle.jokeCard.alt}" class="learn-joke-image" />
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
                 <div class="puzzle-scene">${puzzle.svg}</div>
                 <div class="piece-buttons">
                     ${Object.entries(PIECES).map(([key, piece]) => `
@@ -787,6 +800,31 @@
                 Sound.click();
                 handleQuizAnswer(puzzle.piece, puzzle.piece, document.querySelector(`.piece-btn[data-piece="${puzzle.piece}"]`));
             });
+
+            const infoBtn = document.getElementById('learn-info-btn');
+            const jokeModal = document.getElementById('learn-joke-modal');
+            if (infoBtn && jokeModal) {
+                const closeModal = () => {
+                    jokeModal.classList.remove('open');
+                    document.removeEventListener('keydown', escHandler);
+                };
+                const escHandler = (e) => {
+                    if (e.key === 'Escape') closeModal();
+                };
+                infoBtn.addEventListener('click', () => {
+                    Sound.click();
+                    jokeModal.classList.add('open');
+                    document.addEventListener('keydown', escHandler);
+                });
+                jokeModal.querySelector('.learn-joke-overlay').addEventListener('click', () => {
+                    Sound.click();
+                    closeModal();
+                });
+                jokeModal.querySelector('.learn-joke-close').addEventListener('click', () => {
+                    Sound.click();
+                    closeModal();
+                });
+            }
         }
 
         function handleQuizAnswer(selected, correct, btn) {
