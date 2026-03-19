@@ -419,64 +419,7 @@
                 {
                     piece: 'bishop',
                     title: 'The Diagonal Explorer',
-                    svg: `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="be-snowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.95" />
-        <stop offset="100%" style="stop-color:#E0F4FF;stop-opacity:0.9" />
-      </linearGradient>
-      <linearGradient id="be-skyWarm" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" style="stop-color:#FF8C42;stop-opacity:1" />
-        <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
-        <stop offset="100%" style="stop-color:#FFE4B5;stop-opacity:1" />
-      </linearGradient>
-      <linearGradient id="be-mountainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#F0FFFF;stop-opacity:1" />
-        <stop offset="50%" style="stop-color:#E0F4FF;stop-opacity:1" />
-        <stop offset="100%" style="stop-color:#B0E0E6;stop-opacity:1" />
-      </linearGradient>
-    </defs>
-    <!-- Sunset sky -->
-    <rect width="520" height="300" fill="url(#be-skyWarm)"/>
-    <!-- Sun -->
-    <circle cx="460" cy="80" r="40" fill="#FFD700" opacity="0.9"/>
-    <!-- Mountains -->
-    <polygon points="0,180 150,80 280,200 520,120 520,300 0,300" fill="url(#be-mountainGrad)"/>
-    <polygon points="100,180 220,60 340,190 520,140 520,300 0,300" fill="#D4E6F1" opacity="0.7"/>
-    <!-- Snow patches -->
-    <ellipse cx="150" cy="90" rx="25" ry="15" fill="#FFFFFF" opacity="0.9"/>
-    <ellipse cx="320" cy="160" rx="35" ry="20" fill="#FFFFFF" opacity="0.85"/>
-    <!-- Pine trees -->
-    <polygon points="80,180 75,195 85,195" fill="#2D5016"/>
-    <polygon points="80,185 72,200 88,200" fill="#2D5016"/>
-    <polygon points="420,150 410,170 430,170" fill="#2D5016"/>
-    <polygon points="420,155 405,180 435,180" fill="#2D5016"/>
-    <!-- Diagonal ski tracks -->
-    <line x1="380" y1="50" x2="240" y2="190" stroke="#4169E1" stroke-width="6" opacity="0.6" stroke-linecap="round"/>
-    <line x1="390" y1="45" x2="250" y2="185" stroke="#6495ED" stroke-width="4" opacity="0.5" stroke-linecap="round"/>
-    <line x1="370" y1="55" x2="230" y2="195" stroke="#6495ED" stroke-width="4" opacity="0.5" stroke-linecap="round"/>
-    <!-- Another diagonal direction -->
-    <line x1="250" y1="100" x2="130" y2="200" stroke="#4169E1" stroke-width="5" opacity="0.5" stroke-linecap="round"/>
-    <!-- Bishop character (skier) -->
-    <!-- Head -->
-    <circle cx="235" cy="195" r="10" fill="#FDBCB4"/>
-    <!-- Bishop's mitre (pointed hat) -->
-    <polygon points="225,180 245,180 235,160" fill="#9932CC" opacity="0.9"/>
-    <polygon points="235,160 245,180 250,175" fill="#BA55D3" opacity="0.8"/>
-    <!-- Body/Winter coat -->
-    <rect x="225" y="205" width="20" height="25" rx="3" fill="#4169E1"/>
-    <!-- Arms holding ski poles -->
-    <line x1="225" y1="210" x2="200" y2="205" stroke="#FDBCB4" stroke-width="3"/>
-    <line x1="245" y1="210" x2="270" y2="205" stroke="#FDBCB4" stroke-width="3"/>
-    <!-- Ski poles -->
-    <line x1="200" y1="205" x2="195" y2="235" stroke="#FFD700" stroke-width="2"/>
-    <line x1="270" y1="205" x2="275" y2="235" stroke="#FFD700" stroke-width="2"/>
-    <!-- Legs/skis -->
-    <ellipse cx="228" cy="232" rx="4" ry="8" fill="#FFFFFF" stroke="#000080" stroke-width="1"/>
-    <ellipse cx="242" cy="232" rx="4" ry="8" fill="#FFFFFF" stroke="#000080" stroke-width="1"/>
-    <!-- Text at bottom -->
-    <text x="260" y="285" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="0.5">Diagonal Only</text>
-  </svg>`
+                    svg: `<img src="images/bishop_camel.png" alt="Bishop moves like a camel diagonally. Find the silent sentinel of diagonals." class="learn-puzzle-image" />`
                 },
                 {
                     piece: 'queen',
@@ -748,9 +691,13 @@
             const puzzle = data[learnState.currentPuzzle];
 
             container.innerHTML = `
-                <div class="puzzle-number">Puzzle ${learnState.currentPuzzle + 1} / ${data.length}</div>
+                <div class="puzzle-nav">
+                    ${data.map((_, i) => `
+                        <button class="puzzle-nav-btn ${i === learnState.currentPuzzle ? 'active' : ''}" data-puzzle="${i}" title="Puzzle ${i + 1}">${i + 1}</button>
+                    `).join('')}
+                </div>
                 <h3 style="text-align: center; color: #4ecdc4; margin-bottom: 20px;">${puzzle.title}</h3>
-                ${puzzle.svg}
+                <div class="puzzle-scene">${puzzle.svg}</div>
                 <div class="piece-buttons">
                     ${Object.entries(PIECES).map(([key, piece]) => `
                         <button class="piece-btn" data-piece="${key}" title="${piece.name}">
@@ -759,8 +706,11 @@
                         </button>
                     `).join('')}
                 </div>
+                <div class="learn-answer-row">
+                    <button class="btn btn-neutral" id="learn-show-answer">Show answer</button>
+                    <button class="hint-btn" id="learn-hint" style="display: none;">Need a hint?</button>
+                </div>
                 <div class="feedback"></div>
-                <button class="hint-btn" id="learn-hint" style="display: none;">Need a hint?</button>
                 <div class="reveal-card">
                     <h3>${PIECES[puzzle.piece].name}</h3>
                     <svg class="mini-board" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
@@ -784,6 +734,35 @@
                     </div>
                 </div>
             `;
+
+            document.querySelectorAll('.puzzle-nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.puzzle, 10);
+                    if (idx !== learnState.currentPuzzle) {
+                        Sound.click();
+                        if (learnState.autoAdvanceTimeout) {
+                            clearTimeout(learnState.autoAdvanceTimeout);
+                            learnState.autoAdvanceTimeout = null;
+                        }
+                        learnState.quizLocked = false;
+                        learnState.currentPuzzle = idx;
+                        learnState.attempts = [];
+                        initLearn();
+                    }
+                });
+            });
+
+            document.getElementById('learn-show-answer').addEventListener('click', () => {
+                Sound.click();
+                const reveal = document.querySelector('.reveal-card');
+                const hintBtn = document.getElementById('learn-hint');
+                const showBtn = document.getElementById('learn-show-answer');
+                if (!reveal.classList.contains('show')) {
+                    reveal.classList.add('show');
+                    if (hintBtn) hintBtn.style.display = 'none';
+                    if (showBtn) showBtn.style.display = 'none';
+                }
+            });
 
             document.querySelectorAll('.piece-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -841,6 +820,8 @@
                 Sound.star();
 
                 if (hintBtn) hintBtn.style.display = 'none';
+                const showBtn = document.getElementById('learn-show-answer');
+                if (showBtn) showBtn.style.display = 'none';
                 reveal.classList.add('show');
                 learnState.autoAdvanceTimeout = setTimeout(() => {
                     learnState.quizLocked = false;

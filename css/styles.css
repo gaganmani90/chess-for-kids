@@ -232,18 +232,74 @@ h3 {
     color: #4ecdc4;
 }
 
-/* LEARN SECTION */
-.learn-puzzle-image {
+/* LEARN SECTION - puzzle images fill full width like SVGs */
+.puzzle-scene {
     width: 100%;
-    max-width: 480px;
+    margin: 20px 0;
+}
+
+.puzzle-scene img,
+.puzzle-scene svg {
+    width: 100%;
     height: auto;
     display: block;
-    margin: 20px auto;
+}
+
+.learn-puzzle-image {
     border-radius: 16px;
     border: 2px solid rgba(78, 205, 196, 0.3);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
+.puzzle-scene svg {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+
+.puzzle-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.puzzle-nav-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border: 2px solid #2a2a4a;
+    background: rgba(255, 255, 255, 0.06);
+    color: #b0b0c0;
+    border-radius: 10px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s var(--bounce);
+}
+
+.puzzle-nav-btn:hover {
+    border-color: #4ecdc4;
+    color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.1);
+}
+
+.puzzle-nav-btn.active {
+    background: #4ecdc4;
+    color: #1a1a2e;
+    border-color: #4ecdc4;
+}
+
+.learn-answer-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 0;
+}
 
 .quiz-container {
     background: linear-gradient(135deg, #16213e, #1a2a4a);
@@ -539,13 +595,6 @@ h3 {
     width: 240px;
     height: 240px;
     margin: 15px auto;
-}
-
-.puzzle-number {
-    text-align: center;
-    font-size: 14px;
-    color: #b0b0c0;
-    margin-bottom: 10px;
 }
 
 .score-display {
