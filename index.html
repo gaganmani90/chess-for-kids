@@ -16,6 +16,7 @@
         <div class="nav-bar">
             <div class="nav-buttons">
                 <button class="nav-button active" data-section="learn">Learn</button>
+                <button class="nav-button" data-section="lessons">Lessons</button>
                 <button class="nav-button" data-section="sandbox">Sandbox</button>
                 <button class="nav-button" data-section="save-king">Save the King</button>
                 <button class="nav-button" data-section="setup">Setup</button>
@@ -36,6 +37,95 @@
 
                 <div class="score-display">
                     <span>Total Stars: <span id="total-stars">0</span> ★</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="lessons">
+            <div class="container">
+                <h1>Rook Lesson ♖</h1>
+
+                <div class="lesson-layout">
+                    <!-- Sidebar: content panel + challenge list -->
+                    <nav class="lesson-sidebar" id="lesson-sidebar">
+                        <div class="lesson-content-panel" id="lesson-content-panel">
+                            <div class="lesson-content-header">♖ Rook Basics</div>
+                            <div class="lesson-content-body" id="lesson-content-body">
+                                <p>The Rook moves in <strong>straight lines</strong> — up, down, left, or right.</p>
+                                <p>It can travel as far as it wants in one direction, but it <strong>can't jump</strong> over other pieces.</p>
+                                <p>To capture, the Rook lands on the enemy square.</p>
+                            </div>
+                        </div>
+                        <div class="lesson-sidebar-header">Challenges</div>
+                        <ul class="lesson-nav-list" id="lesson-nav-list">
+                            <!-- Populated by JS from rookChallenges -->
+                        </ul>
+                        <div class="lesson-sidebar-stars">
+                            ★ <span id="lesson-sidebar-stars">0</span>
+                        </div>
+                    </nav>
+
+                    <!-- Main content area -->
+                    <div class="lesson-main" id="lesson-container">
+                        <!-- Intro -->
+                        <div class="lesson-intro" id="lesson-intro">
+                            <div class="card" style="text-align:center;">
+                                <div style="font-size:80px; margin-bottom:16px;">♖</div>
+                                <h2>Meet the Rook</h2>
+                                <p style="color:#b0b0c0; line-height:1.8; margin-bottom:24px;">
+                                    The Rook moves in <strong style="color:#4ecdc4;">straight lines</strong> — up, down, left, or right.<br>
+                                    It can go as far as it wants, but it <strong style="color:#ff6b6b;">can't jump</strong> over other pieces.
+                                </p>
+                                <button class="btn btn-primary" id="lesson-start" style="font-size:18px; padding:16px 36px;">
+                                    Let's Practice!
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Challenge screen -->
+                        <div class="lesson-challenge" id="lesson-challenge" style="display:none;">
+                            <div class="lesson-progress">
+                                <span>Challenge <span id="lesson-num">1</span> / <span id="lesson-total">6</span></span>
+                                <span class="lesson-stars-display">★ <span id="lesson-stars">0</span></span>
+                            </div>
+
+                            <div class="lesson-prompt" id="lesson-prompt"></div>
+
+                            <div class="lesson-board-wrapper">
+                                <svg id="lesson-board" viewBox="0 0 520 520" class="lesson-board-svg"></svg>
+                            </div>
+
+                            <div class="lesson-feedback" id="lesson-feedback"></div>
+                        </div>
+
+                        <!-- Completion -->
+                        <div class="lesson-complete" id="lesson-complete" style="display:none;">
+                            <div class="completion-screen">
+                                <div class="confetti" aria-hidden="true">
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <h2>♖ Rook Mastered! ♖</h2>
+                                <p style="color:#b0b0c0; margin-bottom:12px;">You learned:</p>
+                                <div class="sk-summary">
+                                    <div class="sk-summary-item">
+                                        <span style="font-size:28px;">↕️</span>
+                                        <span>Rooks move in <strong style="color:#4ecdc4;">straight lines</strong></span>
+                                    </div>
+                                    <div class="sk-summary-item">
+                                        <span style="font-size:28px;">🚫</span>
+                                        <span>They <strong style="color:#ff6b6b;">can't jump</strong> over pieces</span>
+                                    </div>
+                                    <div class="sk-summary-item">
+                                        <span style="font-size:28px;">⚔️</span>
+                                        <span>They <strong style="color:#ffd700;">capture</strong> by landing on enemies</span>
+                                    </div>
+                                </div>
+                                <div class="stars-big" id="lesson-final-stars">0 ★</div>
+                                <button class="btn btn-primary" id="lesson-play-again">Play Again</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

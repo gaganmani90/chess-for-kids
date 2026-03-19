@@ -1535,6 +1535,456 @@
             });
         }
 
+        // ===== LESSONS SECTION (Rook) =====
+        const L_CELL = 65;
+
+        const rookChallenges = [
+            {
+                prompt: "Move the Rook to the star!",
+                hint: "Rooks move in straight lines — up, down, left, or right.",
+                rook: [4, 1],
+                target: [4, 6],
+                blockers: [],
+                enemies: [],
+                type: 'move' // simple straight-line move
+            },
+            {
+                prompt: "Move the Rook up to the star!",
+                hint: "Try going straight up!",
+                rook: [6, 3],
+                target: [1, 3],
+                blockers: [],
+                enemies: [],
+                type: 'move'
+            },
+            {
+                prompt: "Get the Rook to the star — but watch the wall!",
+                hint: "The Rook can't jump over pieces. Go around!",
+                rook: [4, 0],
+                target: [4, 5],
+                blockers: [{ pos: [4, 3], piece: 'pawn' }],
+                enemies: [],
+                type: 'navigate' // must go around a blocker
+            },
+            {
+                prompt: "Capture the enemy Pawn!",
+                hint: "Move the Rook onto the enemy piece to capture it!",
+                rook: [5, 1],
+                target: null, // target is the enemy
+                blockers: [],
+                enemies: [{ pos: [5, 6], piece: 'pawn' }],
+                type: 'capture'
+            },
+            {
+                prompt: "Capture the enemy Knight — don't get blocked!",
+                hint: "You can't go through the pawn. Find another path!",
+                rook: [6, 4],
+                target: null,
+                blockers: [{ pos: [3, 4], piece: 'pawn' }],
+                enemies: [{ pos: [1, 4], piece: 'knight' }],
+                type: 'capture'
+            }
+        ];
+
+        let lessonState = {
+            current: 0,
+            stars: 0,
+            attempts: 0,
+            rookPos: null,
+            moveCount: 0,
+            maxMoves: 0,
+            initialized: false,
+            listening: false,
+            completed: [],       // indexes of completed challenges
+            starsPerChallenge: [] // stars earned per challenge
+        };
+
+        function lCellCenter(row, col) {
+            return [col * L_CELL + L_CELL / 2, row * L_CELL + L_CELL / 2];
+        }
+
+        // Check if a rook move from A to B is valid (straight line, no blockers in the way)
+        function isValidRookMove(from, to, blockers, enemies) {
+            const [fr, fc] = from;
+            const [tr, tc] = to;
+
+            // Must be same row or same column
+            if (fr !== tr && fc !== tc) return false;
+            // Can't stay in place
+            if (fr === tr && fc === tc) return false;
+
+            // Check for blockers and enemies along the path
+            const allPieces = [...blockers.map(b => b.pos), ...enemies.map(e => e.pos)];
+
+            if (fr === tr) {
+                // Horizontal move
+                const minC = Math.min(fc, tc);
+                const maxC = Math.max(fc, tc);
+                for (const [pr, pc] of allPieces) {
+                    if (pr === fr && pc > minC && pc < maxC) return false;
+                }
+            } else {
+                // Vertical move
+                const minR = Math.min(fr, tr);
+                const maxR = Math.max(fr, tr);
+                for (const [pr, pc] of allPieces) {
+                    if (pc === fc && pr > minR && pr < maxR) return false;
+                }
+            }
+
+            // Can't move onto a friendly blocker
+            if (blockers.some(b => b.pos[0] === tr && b.pos[1] === tc)) return false;
+
+            return true;
+        }
+
+        function lessonDrawBoard(svgEl, challenge, rookPos, options = {}) {
+            let html = '';
+
+            // Target position: star for move/navigate, enemy square for capture
+            const targetPos = challenge.target || (challenge.enemies.length > 0 ? challenge.enemies[0].pos : null);
+            const isTargetSquare = !!targetPos;
+
+            // Draw 8x8 board
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const isDark = (r + c) % 2 === 1;
+                    let fill = isDark ? '#B58863' : '#E8D5B5';
+
+                    // Destination square: gold for move/navigate, red tint for capture
+                    if (isTargetSquare && r === targetPos[0] && c === targetPos[1]) {
+                        fill = challenge.type === 'capture'
+                            ? 'rgba(255, 100, 100, 0.5)'
+                            : 'rgba(255, 215, 0, 0.6)';
+                    }
+                    // Highlight other valid rook moves (teal)
+                    else if (options.showMoves && rookPos) {
+                        if (isValidRookMove(rookPos, [r, c], challenge.blockers, challenge.enemies)) {
+                            fill = isDark ? 'rgba(78,205,196,0.4)' : 'rgba(78,205,196,0.25)';
+                        }
+                    }
+
+                    html += `<rect x="${c * L_CELL}" y="${r * L_CELL}" width="${L_CELL}" height="${L_CELL}" fill="${fill}" class="square" data-row="${r}" data-col="${c}" style="cursor:pointer;"/>`;
+                }
+            }
+
+            // Draw target star for move/navigate - static, large (pointer-events: none so clicks pass through)
+            if (targetPos && challenge.type !== 'capture') {
+                const [tx, ty] = lCellCenter(targetPos[0], targetPos[1]);
+                html += `<text x="${tx}" y="${ty + 14}" font-size="48" text-anchor="middle" fill="#ffd700" class="star-target" style="pointer-events:none">⭐</text>`;
+            }
+
+            // Draw blockers (pointer-events: none so clicks pass through to square rect)
+            for (const b of challenge.blockers) {
+                const [bx, by] = lCellCenter(b.pos[0], b.pos[1]);
+                html += `<text x="${bx}" y="${by + 18}" font-size="50" text-anchor="middle" fill="${WHITE_COLOR}" stroke="#333" stroke-width="1.5" paint-order="stroke" class="blocker-piece" style="pointer-events:none">${PIECES[b.piece].icon}</text>`;
+            }
+
+            // Draw enemies (pointer-events: none so clicks pass through to square rect for capture)
+            for (const e of challenge.enemies) {
+                const [ex, ey] = lCellCenter(e.pos[0], e.pos[1]);
+                html += `<text x="${ex}" y="${ey + 18}" font-size="54" text-anchor="middle" fill="${ENEMY_COLOR}" stroke="#000" stroke-width="0.5" paint-order="stroke" class="enemy-target" style="pointer-events:none">${PIECES[e.piece].blackIcon}</text>`;
+            }
+
+            // Draw rook (pointer-events: none so clicks pass through to square rect)
+            if (rookPos) {
+                const [rx, ry] = lCellCenter(rookPos[0], rookPos[1]);
+                html += svgPiece(rx, ry + 18, PIECES.rook.icon, WHITE_COLOR, 56, 'class="lesson-rook" id="lesson-rook" style="pointer-events:none"');
+            }
+
+            svgEl.innerHTML = html;
+        }
+
+        // Short labels for sidebar
+        const challengeLabels = ['Move Right', 'Move Up', 'Go Around', 'Capture!', 'Blocked Capture'];
+
+        function lessonUpdateContentPanel() {
+            const bodyEl = document.getElementById('lesson-content-body');
+            const headerEl = document.querySelector('.lesson-content-header');
+            if (!bodyEl || !headerEl) return;
+
+            const introVisible = document.getElementById('lesson-intro').style.display !== 'none';
+            const completeVisible = document.getElementById('lesson-complete').style.display !== 'none';
+
+            if (introVisible) {
+                headerEl.textContent = '♖ Rook Basics';
+                bodyEl.innerHTML = `
+                    <p>The Rook moves in <strong>straight lines</strong> — up, down, left, or right.</p>
+                    <p>It can travel as far as it wants in one direction, but it <strong>can't jump</strong> over other pieces.</p>
+                    <p>To capture, the Rook lands on the enemy square.</p>
+                `;
+            } else if (completeVisible) {
+                headerEl.textContent = '♖ You Did It!';
+                bodyEl.innerHTML = `
+                    <p>You've mastered the Rook!</p>
+                    <p>Remember: straight lines only, no jumping, and capture by landing on enemies.</p>
+                `;
+            } else {
+                const ch = rookChallenges[lessonState.current];
+                const label = challengeLabels[lessonState.current] || 'Challenge ' + (lessonState.current + 1);
+                headerEl.textContent = label;
+                bodyEl.innerHTML = `<p class="hint-text">💡 ${ch.hint}</p>`;
+            }
+        }
+
+        function lessonBuildSidebar() {
+            const list = document.getElementById('lesson-nav-list');
+            list.innerHTML = rookChallenges.map((ch, i) => {
+                const isCompleted = lessonState.completed.includes(i);
+                const isActive = lessonState.current === i;
+                // Unlocked if it's 0, or the previous one is completed
+                const isUnlocked = i === 0 || lessonState.completed.includes(i - 1) || lessonState.completed.includes(i);
+                const statusIcon = isCompleted ? '✓' : (i + 1);
+                const starsText = lessonState.starsPerChallenge[i] ? '★'.repeat(lessonState.starsPerChallenge[i]) : '';
+
+                let cls = 'lesson-nav-item';
+                if (isActive) cls += ' active';
+                if (isCompleted) cls += ' completed';
+                if (!isUnlocked && !isCompleted) cls += ' locked';
+
+                return `<li class="${cls}" data-challenge="${i}">
+                    <span class="lesson-nav-status">${statusIcon}</span>
+                    <span class="lesson-nav-label">${challengeLabels[i] || 'Challenge ' + (i + 1)}</span>
+                    ${starsText ? `<span class="lesson-nav-stars">${starsText}</span>` : ''}
+                </li>`;
+            }).join('');
+
+            // Update total stars in sidebar
+            document.getElementById('lesson-sidebar-stars').textContent = lessonState.stars;
+
+            lessonUpdateContentPanel();
+
+            // Click handlers for sidebar items
+            list.querySelectorAll('.lesson-nav-item:not(.locked)').forEach(item => {
+                item.addEventListener('click', () => {
+                    const idx = parseInt(item.dataset.challenge);
+                    if (idx === lessonState.current) return;
+                    Sound.click();
+                    lessonJumpTo(idx);
+                });
+            });
+        }
+
+        function lessonJumpTo(idx) {
+            // Remove board listener if active
+            const boardSvg = document.getElementById('lesson-board');
+            boardSvg.removeEventListener('click', lessonBoardClick);
+            lessonState.listening = false;
+
+            lessonState.current = idx;
+
+            // Make sure challenge screen is visible
+            document.getElementById('lesson-intro').style.display = 'none';
+            document.getElementById('lesson-complete').style.display = 'none';
+            document.getElementById('lesson-challenge').style.display = 'block';
+
+            lessonRenderChallenge();
+        }
+
+        function initLessons() {
+            if (lessonState.initialized) return;
+            lessonState.initialized = true;
+
+            // Build sidebar and content panel
+            lessonBuildSidebar();
+            lessonUpdateContentPanel();
+
+            document.getElementById('lesson-start').addEventListener('click', () => {
+                Sound.click();
+                lessonState.current = 0;
+                lessonState.stars = 0;
+                lessonState.completed = [];
+                lessonState.starsPerChallenge = [];
+                document.getElementById('lesson-intro').style.display = 'none';
+                document.getElementById('lesson-challenge').style.display = 'block';
+                lessonBuildSidebar();
+                lessonUpdateContentPanel();
+                lessonRenderChallenge();
+            });
+
+            document.getElementById('lesson-play-again').addEventListener('click', () => {
+                Sound.click();
+                lessonState.current = 0;
+                lessonState.stars = 0;
+                lessonState.completed = [];
+                lessonState.starsPerChallenge = [];
+                lessonState.initialized = false;
+                document.getElementById('lesson-complete').style.display = 'none';
+                document.getElementById('lesson-challenge').style.display = 'none';
+                document.getElementById('lesson-intro').style.display = '';
+                lessonUpdateContentPanel();
+                initLessons();
+            });
+        }
+
+        function lessonRenderChallenge() {
+            const ch = rookChallenges[lessonState.current];
+            lessonState.rookPos = [...ch.rook];
+            lessonState.attempts = 0;
+            lessonState.moveCount = 0;
+            lessonState.listening = false;
+
+            // For navigate/capture, allow more moves; for simple move, allow 1
+            lessonState.maxMoves = (ch.type === 'navigate' || ch.type === 'capture') ? 3 : 1;
+
+            // Update sidebar
+            lessonBuildSidebar();
+
+            document.getElementById('lesson-num').textContent = lessonState.current + 1;
+            document.getElementById('lesson-total').textContent = rookChallenges.length;
+            document.getElementById('lesson-stars').textContent = lessonState.stars;
+            document.getElementById('lesson-prompt').textContent = ch.prompt;
+
+            const feedbackEl = document.getElementById('lesson-feedback');
+            feedbackEl.textContent = 'Tap a square to move the Rook!';
+            feedbackEl.className = 'lesson-feedback hint';
+
+            const boardSvg = document.getElementById('lesson-board');
+            lessonDrawBoard(boardSvg, ch, lessonState.rookPos, { showMoves: true });
+
+            // Set up click listener
+            if (!lessonState.listening) {
+                lessonState.listening = true;
+                boardSvg.addEventListener('click', lessonBoardClick);
+            }
+        }
+
+        function lessonBoardClick(e) {
+            const rect = e.target.closest('.square');
+            if (!rect) return;
+
+            const r = parseInt(rect.dataset.row);
+            const c = parseInt(rect.dataset.col);
+            const ch = rookChallenges[lessonState.current];
+            const feedbackEl = document.getElementById('lesson-feedback');
+            const boardSvg = document.getElementById('lesson-board');
+
+            // Check if it's a valid rook move
+            if (!isValidRookMove(lessonState.rookPos, [r, c], ch.blockers, ch.enemies)) {
+                lessonState.attempts++;
+                Sound.wrong();
+
+                // Give specific feedback
+                const [fr, fc] = lessonState.rookPos;
+                if (fr !== r && fc !== c) {
+                    feedbackEl.textContent = "Rooks can only move in straight lines — not diagonally!";
+                } else if (ch.blockers.some(b => b.pos[0] === r && b.pos[1] === c)) {
+                    feedbackEl.textContent = "That square has a friendly piece on it!";
+                } else {
+                    feedbackEl.textContent = ch.hint;
+                }
+                feedbackEl.className = 'lesson-feedback wrong';
+
+                setTimeout(() => {
+                    feedbackEl.textContent = 'Tap a highlighted square!';
+                    feedbackEl.className = 'lesson-feedback hint';
+                }, 1500);
+                return;
+            }
+
+            // Valid move!
+            Sound.click();
+            lessonState.rookPos = [r, c];
+            lessonState.moveCount++;
+
+            // Check if we reached the target
+            let solved = false;
+
+            if (ch.type === 'capture') {
+                // Check if we landed on an enemy
+                const capturedEnemy = ch.enemies.find(e => e.pos[0] === r && e.pos[1] === c);
+                if (capturedEnemy) {
+                    solved = true;
+                }
+            } else {
+                // Check if we reached the target square
+                if (ch.target && r === ch.target[0] && c === ch.target[1]) {
+                    solved = true;
+                }
+            }
+
+            if (solved) {
+                lessonChallengeSolved(ch);
+                return;
+            }
+
+            // Not solved yet — if navigate type, allow more moves
+            if (lessonState.moveCount < lessonState.maxMoves) {
+                // Redraw board with rook at new position, update remaining enemies
+                const remainingEnemies = ch.enemies.filter(e => !(e.pos[0] === r && e.pos[1] === c));
+                const updatedChallenge = { ...ch, enemies: remainingEnemies };
+                lessonDrawBoard(boardSvg, updatedChallenge, lessonState.rookPos, { showMoves: true });
+                feedbackEl.textContent = 'Good! Now move again!';
+                feedbackEl.className = 'lesson-feedback correct';
+            } else {
+                // Out of moves without reaching target
+                lessonState.attempts++;
+                Sound.wrong();
+                feedbackEl.textContent = "Not quite — let's try again!";
+                feedbackEl.className = 'lesson-feedback wrong';
+
+                // Reset rook position after a pause
+                setTimeout(() => {
+                    lessonState.rookPos = [...ch.rook];
+                    lessonState.moveCount = 0;
+                    lessonDrawBoard(boardSvg, ch, lessonState.rookPos, { showMoves: true });
+                    feedbackEl.textContent = ch.hint;
+                    feedbackEl.className = 'lesson-feedback hint';
+                }, 1200);
+            }
+        }
+
+        function lessonChallengeSolved(ch) {
+            const boardSvg = document.getElementById('lesson-board');
+            const feedbackEl = document.getElementById('lesson-feedback');
+
+            // Remove click listener temporarily
+            boardSvg.removeEventListener('click', lessonBoardClick);
+            lessonState.listening = false;
+
+            Sound.correct();
+
+            // Award stars
+            let earned = 3;
+            if (lessonState.attempts === 1) earned = 2;
+            if (lessonState.attempts >= 2) earned = 1;
+            lessonState.stars += earned;
+            document.getElementById('lesson-stars').textContent = lessonState.stars;
+
+            // Redraw board clean (no move highlights)
+            const remainingEnemies = ch.enemies.filter(e =>
+                !(e.pos[0] === lessonState.rookPos[0] && e.pos[1] === lessonState.rookPos[1])
+            );
+            const updatedCh = { ...ch, enemies: remainingEnemies };
+            lessonDrawBoard(boardSvg, updatedCh, lessonState.rookPos, { showMoves: false });
+
+            // Show success
+            if (ch.type === 'capture') {
+                feedbackEl.innerHTML = `Captured! ${Array(earned).fill('<span class="star">★</span>').join('')}`;
+            } else {
+                feedbackEl.innerHTML = `Perfect! ${Array(earned).fill('<span class="star">★</span>').join('')}`;
+            }
+            feedbackEl.className = 'lesson-feedback correct';
+
+            Sound.star();
+
+            // Next challenge or completion
+            setTimeout(() => {
+                lessonState.current++;
+                if (lessonState.current >= rookChallenges.length) {
+                    // Show completion
+                    document.getElementById('lesson-challenge').style.display = 'none';
+                    document.getElementById('lesson-complete').style.display = 'block';
+                    document.getElementById('lesson-final-stars').textContent = lessonState.stars + ' ★';
+                    lessonBuildSidebar();
+                    lessonUpdateContentPanel();
+                    Sound.star();
+                } else {
+                    lessonRenderChallenge();
+                }
+            }, 1500);
+        }
+
         // ===== SAVE THE KING SECTION =====
         const SK_CELL = 65;
 
@@ -2459,6 +2909,7 @@
             });
 
             if (sectionId === 'learn') initLearn();
+            if (sectionId === 'lessons') initLessons();
             if (sectionId === 'sandbox') initSandbox();
             if (sectionId === 'save-king') initSaveKing();
             if (sectionId === 'setup') initSetup();
