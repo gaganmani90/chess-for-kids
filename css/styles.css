@@ -245,6 +245,12 @@ h3 {
     display: block;
 }
 
+.puzzle-scene img.learn-puzzle-image {
+    aspect-ratio: 520 / 300;
+    object-fit: contain;
+    object-position: center;
+}
+
 .learn-puzzle-image {
     border-radius: 16px;
     border: 2px solid rgba(78, 205, 196, 0.3);
