@@ -221,27 +221,6 @@ h3 {
     box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
 }
 
-.btn-secondary {
-    background: #2a2a4a;
-    color: #b0b0c0;
-    border: 2px solid #4ecdc4;
-}
-
-.btn-secondary:hover {
-    background: #3a3a5a;
-    color: #4ecdc4;
-}
-
-.btn-danger {
-    background: #ff6b6b;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #ff5252;
-    transform: translateY(-2px);
-}
-
 .btn-neutral {
     background: #3a3a5a;
     color: #b0b0c0;
@@ -555,9 +534,6 @@ h3 {
     cursor: pointer;
     font-family: 'Fredoka', sans-serif;
     margin-top: 10px;
-}
-
-.hint-btn {
     transition: transform 0.3s var(--bounce);
 }
 
