@@ -1044,6 +1044,8 @@
             stars: 0,
             attempts: 0,
             rookPos: null,
+            prevRookPos: null,   // used for slide animation
+            animating: false,    // blocks clicks during animation
             moveCount: 0,
             maxMoves: 0,
             initialized: false,
@@ -1098,7 +1100,7 @@
             const targetPos = challenge.target || (challenge.enemies.length > 0 ? challenge.enemies[0].pos : null);
             const isTargetSquare = !!targetPos;
 
-            // Draw 8x8 board
+            // Draw 8x8 board (clean — move indicators handled separately as dots)
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const isDark = (r + c) % 2 === 1;
@@ -1107,45 +1109,92 @@
                     // Destination square: gold for move/navigate, red tint for capture
                     if (isTargetSquare && r === targetPos[0] && c === targetPos[1]) {
                         fill = challenge.type === 'capture'
-                            ? 'rgba(255, 100, 100, 0.5)'
-                            : 'rgba(255, 215, 0, 0.6)';
-                    }
-                    // Highlight other valid rook moves (teal)
-                    else if (options.showMoves && rookPos) {
-                        if (isValidRookMove(rookPos, [r, c], challenge.blockers, challenge.enemies)) {
-                            fill = isDark ? 'rgba(78,205,196,0.4)' : 'rgba(78,205,196,0.25)';
-                        }
+                            ? 'rgba(255, 100, 100, 0.45)'
+                            : 'rgba(255, 215, 0, 0.55)';
                     }
 
                     html += `<rect x="${c * L_CELL}" y="${r * L_CELL}" width="${L_CELL}" height="${L_CELL}" fill="${fill}" class="square" data-row="${r}" data-col="${c}" style="cursor:pointer;"/>`;
                 }
             }
 
-            // Draw target star for move/navigate - static, large (pointer-events: none so clicks pass through)
+            // Draw move indicator dots / rings (cleaner than teal fill)
+            if (options.showMoves && rookPos) {
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        if (!isValidRookMove(rookPos, [r, c], challenge.blockers, challenge.enemies)) continue;
+                        const [cx, cy] = lCellCenter(r, c);
+                        const isEnemy = challenge.enemies.some(e => e.pos[0] === r && e.pos[1] === c);
+                        if (isEnemy) {
+                            // Teal ring around a capturable enemy
+                            html += `<circle cx="${cx}" cy="${cy}" r="27" fill="rgba(78,205,196,0.15)" stroke="rgba(78,205,196,0.9)" stroke-width="3" class="move-ring" style="pointer-events:none"/>`;
+                        } else if (!(isTargetSquare && r === targetPos[0] && c === targetPos[1])) {
+                            // Small filled dot for normal valid squares
+                            html += `<circle cx="${cx}" cy="${cy}" r="11" fill="rgba(78,205,196,0.72)" class="move-dot" style="pointer-events:none"/>`;
+                        }
+                    }
+                }
+            }
+
+            // Draw target star for move/navigate
             if (targetPos && challenge.type !== 'capture') {
                 const [tx, ty] = lCellCenter(targetPos[0], targetPos[1]);
                 html += `<text x="${tx}" y="${ty + 14}" font-size="48" text-anchor="middle" fill="#ffd700" class="star-target" style="pointer-events:none">⭐</text>`;
             }
 
-            // Draw blockers (pointer-events: none so clicks pass through to square rect)
+            // Draw blockers
             for (const b of challenge.blockers) {
                 const [bx, by] = lCellCenter(b.pos[0], b.pos[1]);
                 html += `<text x="${bx}" y="${by + 18}" font-size="50" text-anchor="middle" fill="${WHITE_COLOR}" stroke="#333" stroke-width="1.5" paint-order="stroke" class="blocker-piece" style="pointer-events:none">${PIECES[b.piece].icon}</text>`;
             }
 
-            // Draw enemies (pointer-events: none so clicks pass through to square rect for capture)
+            // Draw enemies
             for (const e of challenge.enemies) {
                 const [ex, ey] = lCellCenter(e.pos[0], e.pos[1]);
                 html += `<text x="${ex}" y="${ey + 18}" font-size="54" text-anchor="middle" fill="${ENEMY_COLOR}" stroke="#000" stroke-width="0.5" paint-order="stroke" class="enemy-target" style="pointer-events:none">${PIECES[e.piece].blackIcon}</text>`;
             }
 
-            // Draw rook (pointer-events: none so clicks pass through to square rect)
+            // Draw rook wrapped in a <g> so we can animate it
             if (rookPos) {
                 const [rx, ry] = lCellCenter(rookPos[0], rookPos[1]);
-                html += svgPiece(rx, ry + 18, PIECES.rook.icon, WHITE_COLOR, 56, 'class="lesson-rook" id="lesson-rook" style="pointer-events:none"');
+                html += `<g id="lesson-rook-g" style="pointer-events:none">
+                    ${svgPiece(rx, ry + 18, PIECES.rook.icon, WHITE_COLOR, 56, 'class="lesson-rook" id="lesson-rook"')}
+                </g>`;
             }
 
             svgEl.innerHTML = html;
+
+            // Slide animation: if fromPos is provided, animate rook from old square to new
+            if (rookPos && options.fromPos) {
+                const rookG = svgEl.querySelector('#lesson-rook-g');
+                if (rookG) {
+                    const [fx, fy] = lCellCenter(options.fromPos[0], options.fromPos[1]);
+                    const [tx, ty] = lCellCenter(rookPos[0], rookPos[1]);
+                    const startX = fx - tx;
+                    const startY = fy - ty;
+                    const duration = 220;
+                    const startTime = performance.now();
+
+                    function easeOut(t) { return 1 - (1 - t) * (1 - t); }
+
+                    lessonState.animating = true;
+                    rookG.setAttribute('transform', `translate(${startX}, ${startY})`);
+
+                    function animStep(now) {
+                        const t = Math.min((now - startTime) / duration, 1);
+                        const et = easeOut(t);
+                        const cx = startX * (1 - et);
+                        const cy = startY * (1 - et);
+                        rookG.setAttribute('transform', `translate(${cx}, ${cy})`);
+                        if (t < 1) {
+                            requestAnimationFrame(animStep);
+                        } else {
+                            rookG.setAttribute('transform', 'translate(0, 0)');
+                            lessonState.animating = false;
+                        }
+                    }
+                    requestAnimationFrame(animStep);
+                }
+            }
         }
 
         // Short labels for sidebar
@@ -1273,6 +1322,8 @@
         function lessonRenderChallenge() {
             const ch = rookChallenges[lessonState.current];
             lessonState.rookPos = [...ch.rook];
+            lessonState.prevRookPos = null;
+            lessonState.animating = false;
             lessonState.attempts = 0;
             lessonState.moveCount = 0;
             lessonState.listening = false;
@@ -1289,7 +1340,7 @@
             document.getElementById('lesson-prompt').textContent = ch.prompt;
 
             const feedbackEl = document.getElementById('lesson-feedback');
-            feedbackEl.textContent = 'Tap a square to move the Rook!';
+            feedbackEl.textContent = 'Tap a dot to move the Rook!';
             feedbackEl.className = 'lesson-feedback hint';
 
             const boardSvg = document.getElementById('lesson-board');
@@ -1302,7 +1353,25 @@
             }
         }
 
+        // Helper: check if the path between two squares on the same rank/file is blocked
+        function isPathBlocked(from, to, blockers, enemies) {
+            const [fr, fc] = from;
+            const [tr, tc] = to;
+            if (fr !== tr && fc !== tc) return false; // diagonal, not applicable
+            const allPieces = [...blockers.map(b => b.pos), ...enemies.map(e => e.pos)];
+            if (fr === tr) {
+                const minC = Math.min(fc, tc), maxC = Math.max(fc, tc);
+                return allPieces.some(([pr, pc]) => pr === fr && pc > minC && pc < maxC);
+            } else {
+                const minR = Math.min(fr, tr), maxR = Math.max(fr, tr);
+                return allPieces.some(([pr, pc]) => pc === fc && pr > minR && pr < maxR);
+            }
+        }
+
         function lessonBoardClick(e) {
+            // Ignore clicks during slide animation
+            if (lessonState.animating) return;
+
             const rect = e.target.closest('.square');
             if (!rect) return;
 
@@ -1317,26 +1386,31 @@
                 lessonState.attempts++;
                 Sound.wrong();
 
-                // Give specific feedback
+                // Give specific, contextual feedback
                 const [fr, fc] = lessonState.rookPos;
                 if (fr !== r && fc !== c) {
-                    feedbackEl.textContent = "Rooks can only move in straight lines — not diagonally!";
+                    feedbackEl.textContent = "Rooks go in straight lines — not diagonally! 🚫";
                 } else if (ch.blockers.some(b => b.pos[0] === r && b.pos[1] === c)) {
-                    feedbackEl.textContent = "That square has a friendly piece on it!";
+                    feedbackEl.textContent = "That's your own piece — can't land there! 🛡️";
+                } else if (isPathBlocked(lessonState.rookPos, [r, c], ch.blockers, ch.enemies)) {
+                    feedbackEl.textContent = "A piece is blocking the path — Rooks can't jump! 🐘";
+                } else if (r === fr && c === fc) {
+                    feedbackEl.textContent = "That's where the Rook already is!";
                 } else {
                     feedbackEl.textContent = ch.hint;
                 }
                 feedbackEl.className = 'lesson-feedback wrong';
 
                 setTimeout(() => {
-                    feedbackEl.textContent = 'Tap a highlighted square!';
+                    feedbackEl.textContent = 'Tap a dot to move the Rook!';
                     feedbackEl.className = 'lesson-feedback hint';
-                }, 1500);
+                }, 1600);
                 return;
             }
 
-            // Valid move!
+            // Valid move! Save previous position for animation, then update
             Sound.click();
+            lessonState.prevRookPos = [...lessonState.rookPos];
             lessonState.rookPos = [r, c];
             lessonState.moveCount++;
 
@@ -1344,16 +1418,10 @@
             let solved = false;
 
             if (ch.type === 'capture') {
-                // Check if we landed on an enemy
                 const capturedEnemy = ch.enemies.find(e => e.pos[0] === r && e.pos[1] === c);
-                if (capturedEnemy) {
-                    solved = true;
-                }
+                if (capturedEnemy) solved = true;
             } else {
-                // Check if we reached the target square
-                if (ch.target && r === ch.target[0] && c === ch.target[1]) {
-                    solved = true;
-                }
+                if (ch.target && r === ch.target[0] && c === ch.target[1]) solved = true;
             }
 
             if (solved) {
@@ -1361,24 +1429,26 @@
                 return;
             }
 
-            // Not solved yet — if navigate type, allow more moves
+            // Not solved yet — allow more moves if navigate/capture type
             if (lessonState.moveCount < lessonState.maxMoves) {
-                // Redraw board with rook at new position, update remaining enemies
                 const remainingEnemies = ch.enemies.filter(e => !(e.pos[0] === r && e.pos[1] === c));
                 const updatedChallenge = { ...ch, enemies: remainingEnemies };
-                lessonDrawBoard(boardSvg, updatedChallenge, lessonState.rookPos, { showMoves: true });
-                feedbackEl.textContent = 'Good! Now move again!';
+                lessonDrawBoard(boardSvg, updatedChallenge, lessonState.rookPos, {
+                    showMoves: true,
+                    fromPos: lessonState.prevRookPos
+                });
+                feedbackEl.textContent = 'Good move! Keep going!';
                 feedbackEl.className = 'lesson-feedback correct';
             } else {
                 // Out of moves without reaching target
                 lessonState.attempts++;
                 Sound.wrong();
-                feedbackEl.textContent = "Not quite — let's try again!";
+                feedbackEl.textContent = "Not quite — let's try again! 💪";
                 feedbackEl.className = 'lesson-feedback wrong';
 
-                // Reset rook position after a pause
                 setTimeout(() => {
                     lessonState.rookPos = [...ch.rook];
+                    lessonState.prevRookPos = null;
                     lessonState.moveCount = 0;
                     lessonDrawBoard(boardSvg, ch, lessonState.rookPos, { showMoves: true });
                     feedbackEl.textContent = ch.hint;
@@ -1404,12 +1474,15 @@
             lessonState.stars += earned;
             document.getElementById('lesson-stars').textContent = lessonState.stars;
 
-            // Redraw board clean (no move highlights)
+            // Redraw board clean (no move highlights), with slide animation for final move
             const remainingEnemies = ch.enemies.filter(e =>
                 !(e.pos[0] === lessonState.rookPos[0] && e.pos[1] === lessonState.rookPos[1])
             );
             const updatedCh = { ...ch, enemies: remainingEnemies };
-            lessonDrawBoard(boardSvg, updatedCh, lessonState.rookPos, { showMoves: false });
+            lessonDrawBoard(boardSvg, updatedCh, lessonState.rookPos, {
+                showMoves: false,
+                fromPos: lessonState.prevRookPos || null
+            });
 
             // Show success
             if (ch.type === 'capture') {
